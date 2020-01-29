@@ -12,6 +12,7 @@ docker pull mysql/mysql-server:5.7
 ```bash
 docker run -p 3306:3306 --name=mysqlvkrieltor -e MYSQL_ROOT_PASSWORD=MnM32RtQt -d mysql:5.7
 ```
+
 ```3306:3306``` - первая цифра - внешний порт, вторая - внутренний;
 
 ```--name``` - наименование будущего контейнера;
@@ -24,7 +25,7 @@ docker run -p 3306:3306 --name=mysqlvkrieltor -e MYSQL_ROOT_PASSWORD=MnM32RtQt -
 docker inspect mysqlvkrieltor
 ``` 
 
-вывод:
+#### вывод:
 ```JSON
 ...,
 "Name": "/mysqlvkrieltor",
@@ -49,11 +50,11 @@ docker inspect mysqlvkrieltor
 }
 ```
  
-Параметры подключения к mysqlvkrieltor: 
-```host: 172.23.252.104``` - берем из значения "IPAddress";
+### Параметры подключения к mysqlvkrieltor: 
+```host: 172.23.252.104``` - берем из значения "IPAddress"; 
 
-```port: 3306``` - значение внешнего порта (устонавливается в ручную);
+```port: 3306``` - значение внешнего порта (устанавливается в ручную); 
 
-```user: root``` - стандартное значение;
+```user: root``` - стандартное значение; 
 
 ```password: MnM32RtQt``` - берем из значения "MYSQL_ROOT_PASSWORD".
