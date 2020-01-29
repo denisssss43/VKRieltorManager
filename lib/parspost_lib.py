@@ -29,7 +29,7 @@ def AddressYandex(string, country='Россия', city='Красноярск'):
 			# Определение долготы и широты
 			for ch in BeautifulSoup(response.text, 'html.parser').find_all('script', class_='config-view'):
 
-				patern = re.compile(	# Объявление патерна регулярного выражения
+				patern = re.compile( # Объявление патерна регулярного выражения
 					r'("coordinates":\[\d+.\d+,\d+.\d+\])')
 
 				# Поиск совпадений 
@@ -39,22 +39,67 @@ def AddressYandex(string, country='Россия', city='Красноярск'):
 				longitude = result[0]	# Определение долготы
 			
 			response.close() # Закрытие ответа по запросу 
-			return {	# Возврат результата
+			return { # Возврат результата
 				'address':		str(meta.get('content')).upper().replace(str(country + ', ' + city + ', ').upper(), ''),
 				'latitude': 	latitude,	# широта (перпендикулярна экватору)
 				'longitude': 	longitude}	# Долгота (по экватору)
 			
-	response.close()
-	return {
+	response.close() # Закрытие ответа по запросу 
+	return { # Возврат пустого результата
 		'address':		'NULL',
 		'latitude': 	0.0,	# широта (перпендикулярна экватору)
 		'longitude': 	0.0}	# Долгота (по экватору) 
+# Изменено и откомментировано полностью
+def AddressFromDescription(description, country='Россия', city='Красноярск'):
+	"""Поиск адреса в описании"""
 
+	# Удаление лишних символов
+	for char in description:
+		if ('1234567890 йцукенгшщзхъфывапролджэячсмитьбюёqwertyuiopasdfghjklzxcvbnm'.find(char.lower()) == -1): 
+			description = description.replace(char,' ')
+	
+	# Очистка заглушек удаленных номеров и ссылок
+	description = description.replace('номер удален', ' ').replace('ссылка удалена', ' ')
+
+	# Удаление двойных пробелов
+	for char in ' ':
+		while description.lower().find(char+char) != -1:
+			description = description.replace(char+char, char)
+	
+	# Результат
+	result = {'address':'NULL', 'latitude':0.0, 'longitude':0.0} 
+
+	# Определение адреса
+	for count in range(3)[::-1]:
+		patern = re.compile( # Объявление патерна регулярного выражения
+			r'((\w+ ){'+str(count+1)+r'}([домаДОМА]{1,4}( )?)?[0-9]{1,3}( )?\w?( ))')
+
+		# Прогон результатов поиска регуляркой 
+		for address in patern.findall(description):
+			# Определение является ли результат адресом 
+			result = AddressYandex(address[0], country='Россия', city='Красноярск')
+			# Выход из прогона при нахождении адреса
+			if result['address'] != 'NULL': break
+
+		# Выход из определения адреса при нахождении адреса
+		if result['address'] != 'NULL': break
+	
+	return result
 
 
 
 if __name__ == "__main__":
-	print(AddressYandex("Крас раб 102", country='Россия', city='Красноярск'))
+	# print(
+	# 	AddressYandex(
+	# 		"Крас раб 102", 
+	# 		country='Россия', 
+	# 		city='Красноярск'))
+
+	print(
+		AddressFromDescription(
+			"Сдаётся: КОМНАТА в 4-комн. квартире (Собственник, без комиссии) Район: Центральный Адрес: г. Красноярск, ул. Белинского, д. 3 Стоимость: 9200 (Свет и вода включены в стоимость) Контакты: 89029265016 https://vk.com/evgeniyaderyavko Доп.: Комната большая, закрывается на ключ. Есть всё для комфортного проживания: 2х сп кровать, шкаф угловой, стол, стиральная машинка. Кухня вся укомплектована, WI-FI, ванна и туалет в отличном состоянии, раздельные. В квартире хороший ремонт и хорошая мебель. Рядом остановка в любою точку города, мед институт в 10 минутах, автовокзал, ТЦ на Стрелке, ТЦ Комсомолл, продуктовые магазины, парк.", 
+			country='Россия', 
+			city='Красноярск'))
 
 #	while(True):
 #		try:
