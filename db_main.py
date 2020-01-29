@@ -9,56 +9,46 @@ from pymysql.cursors import DictCursor
 import ast 
 import copy 
 
-connection = None
+# Изменено и откомментировано полностью
+def AddressYandex(string, country='Россия', city='Красноярск'):
+	'''Нормализация адресса строки и определение его параметров'''
 
-def Connect(host='localhost', user='root', password='MnM32RtQt', db='dbo'):
-	global connection
-	connection = pymysql.connect(host=host, user=user, password=password, db=db, charset='utf8', cursorclass=DictCursor)
-def CloseConnect():
-	global connection
-	if connection != None: 
-		connection.close()
+	# Параметр текста в яндекс картах
+	text = (country + ' ' + city + string).replace(' ','%20')
+	
+	response = requests.get(	# Получение ответа по запрошенному тексту
+		'https://yandex.ru/maps/62/moscow/?text='+ text + '&z=17')
 
-def AddPost(link, community, address, city, description, price):
-	return "CALL `dbo`.`add_post`('"+link+"', '"+community+"', '"+address+"', '"+city+"', '"+description+"', "+str(price)+");"
-def AddPostWithoutAddress(link, community, city, description, price):
-	return "CALL `dbo`.`add_post`('"+link+"', '"+community+"', NULL, '"+city+"', '"+description+"', "+str(price)+");"
-def AddTelephone(link, telephone):
-	return "CALL `dbo`.`add_telephone`('"+link+"', '"+telephone+"');"
-def AddHashtag(link, hashtag):
-	return "CALL `dbo`.`add_hashtag`('"+link+"', '"+hashtag+"');"
-def AddAddress(uuid_post, address, city):
-	return "call dbo.add_post_address('"+uuid_post+"', '"+address+"', '"+city+"');"
-
-def AddressYandex(address, country='Россия', city='Красноярск'):
-	response = requests.get('https://yandex.ru/maps/62/moscow/?text='+ (country + ' ' + city + address).replace(' ','%20') + '&z=17')
+	# Определение параметров ответа
 	for meta in BeautifulSoup(response.text, 'html.parser').find_all('meta'):
+		# Проверка связи параметров с параметрами адреса
 		if meta.get('property') == 'og:title' and str(meta.get('content')).lower().find((country+', '+city+', ').lower()) == 0:
-			response.close()
-			return meta.get('content')
+			latitude = 0.0	# широта (перпендикулярна экватору)
+			longitude = 0.0	# Долгота (по экватору)
+			
+			# Определение долготы и широты
+			for ch in BeautifulSoup(response.text, 'html.parser').find_all('script', class_='config-view'):
+
+				patern = re.compile(	# Объявление патерна регулярного выражения
+					r'("coordinates":\[\d+.\d+,\d+.\d+\])')
+
+				# Поиск совпадений 
+				result = patern.findall(ch.text)[0].replace('"coordinates":[','').replace(']','').split(',')
+				
+				latitude = result[1]	# Определение широты 
+				longitude = result[0]	# Определение долготы
+			
+			response.close() # Закрытие ответа по запросу 
+			return {	# Возврат результата
+				'address':		meta.get('content'),
+				'latitude': 	latitude,	# широта (перпендикулярна экватору)
+				'longitude': 	longitude}	# Долгота (по экватору)
+			
 	response.close()
-	return 'none'
-
-def AddressPosition(address):
-	latitude = 0.0
-	longitude = 0.0
-
-	print('https://yandex.ru/maps/62/moscow/?text='+ (address).replace(' ','%20') + '&z=17')
-	response = requests.get('https://yandex.ru/maps/62/moscow/?text='+ (address).replace(' ','%20') + '&z=17')
-
-	i = ''
-	for ch in BeautifulSoup(response.text, 'html.parser').find_all('script', class_='config-view'):
-		patern = re.compile(r'("coordinates":\[\d+.\d+,\d+.\d+\])')
-		result = patern.findall(ch.text)[0].replace('"coordinates":[','').replace(']','').split(',')
-		latitude = result[1]
-		longitude = result[0]
-
-	response.close()
-
 	return {
-		'latitude': latitude,	# широта (перпендикулярна экватору)
-		'longitude': longitude	# Долгота (по экватору)
-	}
+		'address':		'none',
+		'latitude': 	0.0,	# широта (перпендикулярна экватору)
+		'longitude': 	0.0}	# Долгота (по экватору) 
 
 def AddressFromDescription(description, country='Россия', city='Красноярск'):
 	for char in description:
@@ -348,17 +338,18 @@ def SearchFromGroupWithoutAddress(g_id='', g_title='', offset=0, country='Рос
 	except: pass
 
 if __name__ == "__main__":
-	Connect()
-	with connection.cursor() as cursor:
-		while (True):
-			cursor.execute("SELECT * FROM dbo.address WHERE latitude is null and longitude is null LIMIT 1;")
-			adress = copy.deepcopy(cursor.fetchone())
-			if (adress != None):
-				position = AddressPosition(adress['title'])
-
-				cursor.execute("call dbo.add_address_position('"+adress['uuid']+"', "+position['latitude']+", "+position['longitude']+");")
-				connection.commit()
-
-				print(adress, position)
-
-	CloseConnect()
+	print(AddressYandex('Красраб 102', country='Россия', city='Красноярск'))
+	#	Connect()
+	#	with connection.cursor() as cursor:
+	#		while (True):
+	#			cursor.execute("SELECT * FROM dbo.address WHERE latitude is null and longitude is null LIMIT 1;")
+	#			adress = copy.deepcopy(cursor.fetchone())
+	#			if (adress != None):
+	#				position = AddressPosition(adress['title'])
+	#	
+	#				cursor.execute("call dbo.add_address_position('"+adress['uuid']+"', "+position['latitude']+", "+position['longitude']+");")
+	#				connection.commit()
+	#	
+	#				print(adress, position)
+	#	
+	#	CloseConnect()

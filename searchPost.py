@@ -4,7 +4,7 @@ import datetime
 if __name__ == "__main__":
 	while(True):
 		try:
-			print (datetime.datetime.now(), 'Connect');
+			print (datetime.datetime.now(), 'Connect')
 			db.Connect()
 
 			for i in range(3):
