@@ -156,17 +156,51 @@ def TelephonePars(description):
 	while match:
 		# Запись исходной строки найденого номера в описании
 		telephones.append(str(match[0])) 
+
 		# Удаление исходной строки из описания
 		description = description.replace(telephones[len(telephones)-1],'')
+
 		# Нормализация найденного номера и приведения к виду
 		for char in telephones[len(telephones)-1]:
 			if ('1234567890'.find(char.lower()) == -1): 
 					telephones[len(telephones)-1] = telephones[len(telephones)-1].replace(char,'')
 		telephones[len(telephones)-1] = '+7'+telephones[len(telephones)-1][-10:]
+
 		# Поиск следующей исходной строки номера в описании
 		match = paternTelephones.search(description)
 	#
 	return telephones
+# NOTE:Изменено и откомментировано полностью
+def HashtagPars(description):
+	"""Получение хэштэгов из описания поста"""
+	
+	paternHashtags = re.compile( # Объявление патерна регулярного выражения
+		r'#\S+')
+
+	# Инициализация списка хэштэгов
+	hashtags = list()
+
+	# Нохождение первой исходной строки хэштэга в описании
+	match = paternHashtags.search(description)
+	while match:
+		# Запись исходной строки найденого хэштэга в описании
+		hashtags.append(str(match[0])) 
+
+		# Удаление исходной строки из описания
+		description = description.replace(hashtags[len(hashtags)-1],'')
+
+		# Список символов которые необходимо оставить
+		charSet = '1234567890йцукенгшщзхъфывапролджэячсмитьбюёqwertyuiopasdfghjklzxcvbnm#_-'
+
+		# отчистка хэштэга от посторонних символов
+		for char in hashtags[len(hashtags)-1]:
+			if (charSet.find(char.lower()) == -1): 
+				hashtags[len(hashtags)-1] = hashtags[len(hashtags)-1].replace(char,'')
+
+		# Поиск следующей исходной строки в описании
+		match = paternHashtags.search(description)   
+	#
+	return hashtags
 
 def WallItemPars(wall_item=''):
 	"""Парсинг поста сообщества"""
@@ -174,7 +208,7 @@ def WallItemPars(wall_item=''):
 	description = DescriptionPars(wall_item) 
 	# Получение телефонных номеров
 	telephones = TelephonePars(description)
-	# Получение телефонных номеров
+	# Получение хэштэгов
 	hashtags = HashtagPars(description)
 	# Отчистка
 	description = CleanDescription(description)
