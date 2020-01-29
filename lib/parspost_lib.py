@@ -40,13 +40,13 @@ def AddressYandex(string, country='Россия', city='Красноярск'):
 			
 			response.close() # Закрытие ответа по запросу 
 			return {	# Возврат результата
-				'address':		meta.get('content'),
+				'address':		str(meta.get('content')).upper().replace(str(country + ', ' + city + ', ').upper(), ''),
 				'latitude': 	latitude,	# широта (перпендикулярна экватору)
 				'longitude': 	longitude}	# Долгота (по экватору)
 			
 	response.close()
 	return {
-		'address':		'none',
+		'address':		'NULL',
 		'latitude': 	0.0,	# широта (перпендикулярна экватору)
 		'longitude': 	0.0}	# Долгота (по экватору) 
 
@@ -54,7 +54,8 @@ def AddressYandex(string, country='Россия', city='Красноярск'):
 
 
 if __name__ == "__main__":
-	print(AddressYandex("", country='Россия', city='Красноярск'))
+	print(AddressYandex("Крас раб 102", country='Россия', city='Красноярск'))
+
 #	while(True):
 #		try:
 #			print (datetime.datetime.now(), 'Connect')
