@@ -9,7 +9,7 @@ from contextlib import closing
 import ast 
 import copy 
 
-# Изменено и откомментировано полностью
+# NOTE:Изменено и откомментировано полностью
 def AddressYandex(string, country='Россия', city='Красноярск'):
 	'''Нормализация адресса строки и определение его параметров'''
 
@@ -49,7 +49,7 @@ def AddressYandex(string, country='Россия', city='Красноярск'):
 		'address':		'NULL',
 		'latitude': 	0.0,	# широта (перпендикулярна экватору)
 		'longitude': 	0.0}	# Долгота (по экватору) 
-# Изменено и откомментировано полностью
+# NOTE:Изменено и откомментировано полностью
 def AddressFromDescription(description, country='Россия', city='Красноярск'):
 	"""Поиск адреса в описании"""
 
@@ -86,6 +86,7 @@ def AddressFromDescription(description, country='Россия', city='Красн
 	
 	return result
 
+# NOTE:Изменено и откомментировано полностью
 def DescriptionPars(wall_item):
 	"""Получение описания из записи поста"""
 
@@ -139,15 +140,42 @@ def DescriptionPars(wall_item):
 							' ;','; ').replace(
 								'( ','( ').replace(
 									' )',') ')
+# NOTE:Изменено и откомментировано полностью
+def TelephonePars(description):
+	"""Получение телефонных номеров из описания поста"""
+	
+	paternTelephones = re.compile( # Объявление патерна регулярного выражения
+		r'(\s*)?(\+)?([- _():=+]?\d[- _():=+]?){10,14}(\s*)?')
+	
+	# Инициализация списка телефонных номеров
+	telephones = list()
+
+	# Нохождение первой исходной строки номера в описании
+	match = paternTelephones.search(description)
+	
+	while match:
+		# Запись исходной строки найденого номера в описании
+		telephones.append(str(match[0])) 
+		# Удаление исходной строки из описания
+		description = description.replace(telephones[len(telephones)-1],'')
+		# Нормализация найденного номера и приведения к виду
+		for char in telephones[len(telephones)-1]:
+			if ('1234567890'.find(char.lower()) == -1): 
+					telephones[len(telephones)-1] = telephones[len(telephones)-1].replace(char,'')
+		telephones[len(telephones)-1] = '+7'+telephones[len(telephones)-1][-10:]
+		# Поиск следующей исходной строки номера в описании
+		match = paternTelephones.search(description)
+	#
+	return telephones
 
 def WallItemPars(wall_item=''):
 	"""Парсинг поста сообщества"""
 	# Описание нормализовано и записано
 	description = DescriptionPars(wall_item) 
 	# Получение телефонных номеров
-	telephones = TelephonesPars(description)
+	telephones = TelephonePars(description)
 	# Получение телефонных номеров
-	hashtags = ParsHashtags(description)
+	hashtags = HashtagPars(description)
 	# Отчистка
 	description = CleanDescription(description)
 	return {'date': None, # ParsDate(wall_item), # Получение даты
@@ -207,7 +235,6 @@ def WallItemSearch():
 		except: pass
 	
 
-
 if __name__ == "__main__":
 	# print(
 	# 	AddressYandex(
@@ -220,20 +247,3 @@ if __name__ == "__main__":
 			"Сдаётся: КОМНАТА в 4-комн. квартире (Собственник, без комиссии) Район: Центральный Адрес: г. Красноярск, ул. Белинского, д. 3 Стоимость: 9200 (Свет и вода включены в стоимость) Контакты: 89029265016 https://vk.com/evgeniyaderyavko Доп.: Комната большая, закрывается на ключ. Есть всё для комфортного проживания: 2х сп кровать, шкаф угловой, стол, стиральная машинка. Кухня вся укомплектована, WI-FI, ванна и туалет в отличном состоянии, раздельные. В квартире хороший ремонт и хорошая мебель. Рядом остановка в любою точку города, мед институт в 10 минутах, автовокзал, ТЦ на Стрелке, ТЦ Комсомолл, продуктовые магазины, парк.", 
 			country='Россия', 
 			city='Красноярск'))
-
-#	while(True):
-#		try:
-#			print (datetime.datetime.now(), 'Connect')
-#			db.Connect()
-#
-#			for i in range(3):
-#				db.SearchFromGroupWithoutAddress(g_id='123114913', g_title='', offset=i*10, country='Россия', city='Красноярск')
-#				db.SearchFromGroupWithoutAddress(g_id='105543780', g_title='', offset=i*10, country='Россия', city='Красноярск')
-#				db.SearchFromGroupWithoutAddress(g_id='', g_title='arendav24', offset=i*10, country='Россия', city='Красноярск')
-#				db.SearchFromGroupWithoutAddress(g_id='', g_title='arenda.v.krasnoyarske', offset=i*10, country='Россия', city='Красноярск')
-#				db.SearchFromGroupWithoutAddress(g_id='76867861', g_title='', offset=i*10, country='Россия', city='Красноярск') 
-#				db.SearchFromGroupWithoutAddress(g_id='80318218', g_title='', offset=i*10, country='Россия', city='Красноярск')
-#
-#			db.CloseConnect()
-#			print ('	CloseConnect')
-#		except: pass
