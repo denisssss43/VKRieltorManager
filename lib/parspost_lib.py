@@ -86,6 +86,126 @@ def AddressFromDescription(description, country='Россия', city='Красн
 	
 	return result
 
+def DescriptionPars(wall_item):
+	"""Получение описания из записи поста"""
+
+	# Обработка описания
+	pi_text = str(BeautifulSoup(wall_item, 'html.parser').find_all(class_='pi_text')[0])
+
+	# Отчистка от раскрытия полного текста
+	for pi_text_more in BeautifulSoup(wall_item,'html.parser').find_all(class_='pi_text_more'): 
+		pi_text = pi_text.replace(str(pi_text_more),'') 
+	
+	# отчистка от тегов ссылок
+	for link in BeautifulSoup(str(pi_text), 'html.parser').find_all('a'): 
+		pi_text = pi_text.replace(str(link), link.get_text()) 
+	
+	# отчистка от эмодзи
+	for emoji in BeautifulSoup(str(pi_text), 'html.parser').find_all('img', class_='emoji'): 
+		pi_text = pi_text.replace(str(emoji), '') 
+	
+	# отчистка от html тегов
+	for zoom_text in BeautifulSoup(str(pi_text), 'html.parser').find_all(class_='pi_text zoom_text'): 
+		pi_text = pi_text.replace(str(zoom_text), zoom_text.get_text()) 
+	
+	# Отчистка от html тегов
+	pi_text = pi_text.replace(
+		'<br/>',' ').replace(
+			'</div>','').replace(
+				'<div class="pi_text">','').replace(
+					'<span style="display:none">','').replace(
+						'<span>','').replace(
+							'</span>','')
+	
+	# Список символов которые необходимо оставить
+	charSet = '1234567890 йцукенгшщзхъфывапролджэячсмитьбюёqwertyuiopasdfghjklzxcvbnm#_-+()/\\,.!;:?\n'
+
+	# отчистка описания от посторонних символов
+	for char in pi_text:
+		if (charSet.find(char.lower()) == -1): 
+			pi_text = pi_text.replace(char,' ')
+	
+	# отчистка от двойных пробелов
+	while pi_text.find('  ') > -1: 
+		pi_text = pi_text.replace('  ',' ')
+	
+	# нормализация знаков припинания
+	return pi_text.replace(
+		' .','. ').replace(
+			' ,',', ').replace(
+				' !','! ').replace(
+					' ?','? ').replace(
+						' :',': ').replace(
+							' ;','; ').replace(
+								'( ','( ').replace(
+									' )',') ')
+
+def WallItemPars(wall_item=''):
+	"""Парсинг поста сообщества"""
+	# Описание нормализовано и записано
+	description = DescriptionPars(wall_item) 
+	# Получение телефонных номеров
+	telephones = TelephonesPars(description)
+	# Получение телефонных номеров
+	hashtags = ParsHashtags(description)
+	# Отчистка
+	description = CleanDescription(description)
+	return {'date': None, # ParsDate(wall_item), # Получение даты
+			'link': ParsLink(wall_item),		# Получение ссылки на запись во вкантакте
+			'description': description,			# Описание 
+			'price': ParsPrice(description),	# Цена предложения
+			'telephones': telephones,			# Получение телефонных номеров
+			'hashtags': hashtags}				# Получение телефонных номеров
+
+def WallItemSearch():
+	"""Поиск сырых постов в указанных группах
+	(Без адреса)"""
+
+	groupList = list()
+	groupList.append({'country':'Россия', 'city':'Красноярск', 'id_group':'public105543780'})
+	groupList.append({'country':'Россия', 'city':'Красноярск', 'id_group':'arendav24'})
+
+
+	for group in groupList:
+		g_ = group['id_group']
+		offset = 0
+
+		response = requests.get('https://m.vk.com/' + g_ + '?offset=' + str(offset) + '&own=1')
+
+		vk_com = BeautifulSoup(response.text, 'html.parser') 
+
+		response.close() 
+		
+		# Список постов
+		_list = list()
+
+		# Загрузка списка постов
+		for wall_item in vk_com.find_all(class_='wall_item'): 
+			try: _list.append(WallItemParserWithoutAddress(str(wall_item)))
+			except: pass
+
+		try:
+			with connection.cursor() as cursor:
+				# print ('saved ')
+				for row in _list:
+					# print ('saved ', row['link'], row['price'])
+					cursor.execute(AddPostWithoutAddress(
+						link=row['link'], 
+						community='https://m.vk.com/' + g_, 
+						city=city, 
+						description=row['description'], 
+						price=row['price']))
+					for telephone in row['telephones']:
+						cursor.execute(AddTelephone(
+							link=row['link'], 
+							telephone=telephone))
+					for hashtag in row['hashtags']:
+						cursor.execute(AddHashtag(
+							link=row['link'], 
+							hashtag=hashtag))
+			connection.commit()
+		except: pass
+	
 
 
 if __name__ == "__main__":
