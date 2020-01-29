@@ -141,6 +141,71 @@ def DescriptionPars(wall_item):
 								'( ','( ').replace(
 									' )',') ')
 # NOTE:Изменено и откомментировано полностью
+def DescriptionClean(description):
+	"""Итоговая отчистка и нормализация описания"""
+
+	# Отчистка описания от номеров телефонов
+	paternTelephones = re.compile( # Объявление патерна регулярного выражения
+		r'(\s*)?(\+)?([- _():=+]?\d[- _():=+]?){10,14}(\s*)?')
+	# Поиск исходной строки номера в описании
+	match = paternTelephones.search(description)
+	while match:
+		# Удаление исходной строки из описания
+		description = description.replace(str(match[0]),'<номер удален>')
+		# Поиск следующей исходной строки номера в описании
+		match = paternTelephones.search(description)
+
+	# Отчистка описания от хэштэгов
+	paternHashtags = re.compile( # Объявление патерна регулярного выражения
+		r'#\S+')
+	# Поиск исходной строки в описании	
+	match = paternHashtags.search(description)
+	while match:
+		# Удаление исходной строки из описания
+		description = description.replace(str(match[0]),'')
+		# Поиск следующей исходной строки в описании
+		match = paternHashtags.search(description) 
+
+	# Нормализация знаков припинания
+	for char in '.,!?:;':
+		description = description.replace(char, char+' ')
+		while description.lower().find(' '+char) != -1 or description.lower().find(' '+char+' ') != -1:
+			while description.lower().find('  ') != -1:
+				description = description.replace('  ', ' ')
+			description = description.replace(' '+char, char+' ')
+			description = description.replace(' '+char+' ', char+' ')
+
+	# проверка на дубликаты
+	for char in ' #_-+()/\\,.!?\n':
+		while description.lower().find(char+char) != -1:
+			description = description.replace(char+char, char)
+			
+	# Отчистка описания от номеров ссылок  
+	paternLinks = re.compile( # Объявление патерна регулярного выражения
+		r'(https: /)?([a-zA-Z0-9_-]{2,}. )+[a-zA-Z]{1,}(/[a-zA-Z0-9_-]+)*') 
+	# Поиск исходной строки в описании	     
+	match = paternLinks.search(description)
+	while match:
+		# Удаление исходной строки из описания
+		description = description.replace(str(match[0]),'<ссылка удалена>')
+		# Поиск следующей исходной строки в описании
+		match = paternLinks.search(description)
+
+	#   
+	paternDate = re.compile( # Объявление патерна регулярного выражения
+		r'(0[1-9]|[1-3][1-9]). (0[1-9]|1[1-9])(. ([0-9]{4}|[0-9]{2}))?') 
+	# Поиск исходной строки в описании	 
+	match = paternDate.search(description)
+	while match:
+		# Удаление исходной строки из описания
+		description = description.replace(str(match[0]),str(match[0]).replace(' ',''))
+		# Поиск следующей исходной строки в описании
+		match = paternDate.search(description)
+	
+	if description[0] == ' ': description = description.replace(' ', '', 1)
+
+	return description
+# NOTE:Изменено и откомментировано полностью
 def TelephonePars(description):
 	"""Получение телефонных номеров из описания поста"""
 	
@@ -201,21 +266,76 @@ def HashtagPars(description):
 		match = paternHashtags.search(description)   
 	#
 	return hashtags
+# NOTE:Изменено и откомментировано полностью
+def LinkPars(wall_item):
+	"""Получение ссылки на пост"""
 
+	for post_anchor in BeautifulSoup(wall_item, 'html.parser').find_all('a', class_='post__anchor anchor'):
+		return str('https://vk.com/'+str(post_anchor.get('name')).replace('post','wall'))
+	return None
+# NOTE:Изменено и откомментировано полностью
+def PricePars(description):
+	"""Получение стоимости предложения из описания"""
+
+	price = 0.0
+
+	paternPrice = re.compile( # Объявление патерна регулярного выражения
+		r'(\W|\D)[0-9]{1,3}[., ]{0,3}[0-9]{3}(\W|\D)')
+		
+	# Запись исходной строки найденого номера в описании
+	match = paternPrice.search(description)
+	while match:
+		# Запись исходной строки найденого номера в описании
+		string = str(match[0])
+		# отчистка описания от посторонних символов
+		for char in string:
+			if ('1234567890'.find(char.lower()) == -1): 
+				string = string.replace(char, '')
+		price = float(string)
+		break
+
+	if price != 0.0: return price
+
+	match = re.search(r'(\d|\s)(тыс|т)[., ]{1,3}', description)
+	while match:
+		# Запись исходной строки найденого номера в описании
+		_old = str(match[0])
+		_new = _old.replace('тыс','000').replace('т','000')
+		description = description.replace(_old, _new)
+		break
+
+	match = paternPrice.search(description)
+	while match:
+		# Запись исходной строки найденого номера в описании
+		string = str(match[0])
+		# отчистка описания от посторонних символов
+		for char in string:
+			if ('1234567890'.find(char.lower()) == -1): 
+				string = string.replace(char, '')
+		price = float(string)
+		break
+	#
+	return price
+# NOTE:Изменено и откомментировано полностью
 def WallItemPars(wall_item=''):
 	"""Парсинг поста сообщества"""
+
 	# Описание нормализовано и записано
 	description = DescriptionPars(wall_item) 
+
 	# Получение телефонных номеров
 	telephones = TelephonePars(description)
+
 	# Получение хэштэгов
 	hashtags = HashtagPars(description)
-	# Отчистка
-	description = CleanDescription(description)
+
+	# Отчистка описания 
+	description = DescriptionClean(description)
+
 	return {'date': None, # ParsDate(wall_item), # Получение даты
-			'link': ParsLink(wall_item),		# Получение ссылки на запись во вкантакте
+			'link': LinkPars(wall_item),		# Получение ссылки на запись во вкантакте
 			'description': description,			# Описание 
-			'price': ParsPrice(description),	# Цена предложения
+			'price': PricePars(description),	# Цена предложения
 			'telephones': telephones,			# Получение телефонных номеров
 			'hashtags': hashtags}				# Получение телефонных номеров
 
