@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from contextlib import closing
 import ast 
 import copy 
+import datetime
 
 # NOTE:Изменено и откомментировано полностью
 def AddressYandex(string, country='Россия', city='Красноярск'):
@@ -40,15 +41,16 @@ def AddressYandex(string, country='Россия', city='Красноярск'):
 			
 			response.close() # Закрытие ответа по запросу 
 			return { # Возврат результата
-				'address':		str(meta.get('content')).upper().replace(str(country + ', ' + city + ', ').upper(), ''),
-				'latitude': 	latitude,	# широта (перпендикулярна экватору)
-				'longitude': 	longitude}	# Долгота (по экватору)
+				'address': str(meta.get('content')).upper().replace(
+					str(country + ', ' + city + ', ').upper(), ''),
+				'latitude': latitude,	# широта (перпендикулярна экватору)
+				'longitude': longitude}	# Долгота (по экватору)
 			
 	response.close() # Закрытие ответа по запросу 
 	return { # Возврат пустого результата
-		'address':		'NULL',
-		'latitude': 	0.0,	# широта (перпендикулярна экватору)
-		'longitude': 	0.0}	# Долгота (по экватору) 
+		'address': 'NULL',
+		'latitude': 0.0,	# широта (перпендикулярна экватору)
+		'longitude': 0.0}	# Долгота (по экватору) 
 # NOTE:Изменено и откомментировано полностью
 def AddressFromDescription(description, country='Россия', city='Красноярск'):
 	"""Поиск адреса в описании"""
@@ -119,7 +121,7 @@ def DescriptionPars(wall_item):
 							'</span>','')
 	
 	# Список символов которые необходимо оставить
-	charSet = '1234567890 йцукенгшщзхъфывапролджэячсмитьбюёqwertyuiopasdfghjklzxcvbnm#_-+()/\\,.!;:?\n'
+	charSet = '1234567890 йцукенгшщзхъфывапролджэячсмитьбюёqwertyuiopasdfghjklzxcvbnm#_-+()/\\,.!;:?'
 
 	# отчистка описания от посторонних символов
 	for char in pi_text:
@@ -409,62 +411,80 @@ def WallItemPars(wall_item=''):
 	# Отчистка описания 
 	description = DescriptionClean(description)
 
-	return {'date': None, # ParsDate(wall_item), # Получение даты
+	return {'date': DatePars(wall_item), 		# Получение даты публикации
 			'link': LinkPars(wall_item),		# Получение ссылки на запись во вкантакте
 			'description': description,			# Описание 
 			'price': PricePars(description),	# Цена предложения
+			'address': {						# Адрес
+				'address': 'NULL', 
+				'latitude': 0.0, 
+				'longitude': 0.0}, 
 			'telephones': telephones,			# Получение телефонных номеров
 			'hashtags': hashtags}				# Получение телефонных номеров
 
-def WallItemSearch():
+# NOTE:Изменено и откомментировано полностью
+def WallItemSearch(offset=0):
 	"""Поиск сырых постов в указанных группах
 	(Без адреса)"""
 
 	groupList = list()
 	groupList.append({'country':'Россия', 'city':'Красноярск', 'id_group':'public105543780'})
-	groupList.append({'country':'Россия', 'city':'Красноярск', 'id_group':'arendav24'})
+	groupList.append({'country':'Россия', 'city':'Красноярск', 'id_group':'public9751268'})
 
-
+	# Поиск по добавленым группам
 	for group in groupList:
-		g_ = group['id_group']
-		offset = 0
 
+		# получение идентификатора группы
+		g_ = group['id_group']
+		
+		# Запрос в группу для получения постов
 		response = requests.get('https://m.vk.com/' + g_ + '?offset=' + str(offset) + '&own=1')
 
+		# Подготовка ответа для дальнейшего парса
 		vk_com = BeautifulSoup(response.text, 'html.parser') 
 
+		# Закрытие ответа
 		response.close() 
 		
-		# Список постов
+		# Список обработаных постов
 		_list = list()
 
 		# Загрузка списка постов
 		for wall_item in vk_com.find_all(class_='wall_item'): 
-			try: _list.append(WallItemParserWithoutAddress(str(wall_item)))
-			except: pass
+			try: 
+				# Парс загруженного поста
+				wall_item = WallItemPars(str(wall_item))
 
-		try:
-			with connection.cursor() as cursor:
-				# print ('saved ')
-				for row in _list:
-					# print ('saved ', row['link'], row['price'])
-					cursor.execute(AddPostWithoutAddress(
-						link=row['link'], 
-						community='https://m.vk.com/' + g_, 
-						city=city, 
-						description=row['description'], 
-						price=row['price']))
-					for telephone in row['telephones']:
-						cursor.execute(AddTelephone(
-							link=row['link'], 
-							telephone=telephone))
-					for hashtag in row['hashtags']:
-						cursor.execute(AddHashtag(
-							link=row['link'], 
-							hashtag=hashtag))
-			connection.commit()
-		except: pass
-	
+				# Проверка определения цены 
+				# В сучае, когда цена не определена дальнейшая обработка прекращается
+				if wall_item['price'] == 0.0: continue
+				
+				wall_item['address'] = AddressFromDescription(
+					wall_item['description'],
+					group['country'],
+					group['city']
+				)
+
+				# Проверка определения адреса 
+				# В сучае, когда адрес не определен дальнейшая обработка прекращается
+				if wall_item['address']['address'] == 'NULL': continue
+
+				# Добавление обработанного поста в список
+				_list.append(wall_item)
+
+				# Вывод информации о посте 
+				# TODO: нужно будет потом удалеить
+				for atr in wall_item.items():
+					if atr[0] == 'address':
+						print(atr[0]+': {')
+						for atr1 in atr[1].items():
+							print('    ',atr1[0]+':', atr1[1])
+						print('}')
+					else: 
+						print(atr[0]+':',atr[1])
+				
+				print('')
+			except: pass
 
 if __name__ == "__main__":
 	# print(
@@ -473,8 +493,12 @@ if __name__ == "__main__":
 	# 		country='Россия', 
 	# 		city='Красноярск'))
 
-	print(
-		AddressFromDescription(
-			"Сдаётся: КОМНАТА в 4-комн. квартире (Собственник, без комиссии) Район: Центральный Адрес: г. Красноярск, ул. Белинского, д. 3 Стоимость: 9200 (Свет и вода включены в стоимость) Контакты: 89029265016 https://vk.com/evgeniyaderyavko Доп.: Комната большая, закрывается на ключ. Есть всё для комфортного проживания: 2х сп кровать, шкаф угловой, стол, стиральная машинка. Кухня вся укомплектована, WI-FI, ванна и туалет в отличном состоянии, раздельные. В квартире хороший ремонт и хорошая мебель. Рядом остановка в любою точку города, мед институт в 10 минутах, автовокзал, ТЦ на Стрелке, ТЦ Комсомолл, продуктовые магазины, парк.", 
-			country='Россия', 
-			city='Красноярск'))
+	#print(
+	#	AddressFromDescription(
+	#		Адрес: г. Красноярск, ул. Белинского, д. 3", 
+	#		country='Россия', 
+	#		city='Красноярск'))
+
+	WallItemSearch(offset=0)
+
+	
