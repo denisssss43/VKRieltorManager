@@ -267,6 +267,83 @@ def HashtagPars(description):
 	#
 	return hashtags
 # NOTE:Изменено и откомментировано полностью
+def DatePars(wall_item):
+	"""Получение даты публикации поста"""
+
+	# Список всех сокращений в дате вк
+	m = "дек ноя окт сен авг июл июн мая апр мар фев янв сегодня".split(' ')[::-1]
+	# Исходная строка с датой
+	str_date = ''
+	# Определенное значение минут
+	minute=0
+	# Определенное значение часов
+	hour=12
+	# Определенное значение дня
+	day = -1
+	# Определенное значение месяца
+	month = -1
+	# Определенное значение года
+	year = -1
+
+	# Получение и обработка даты поста
+	for wi_date in BeautifulSoup(wall_item, 'html.parser').find_all('a', class_='wi_date'):
+		
+		# Получение не обработанной даты
+		str_date = str(wi_date.get_text())
+
+		# Получение времени
+		patern = re.compile( # Объявление патерна регулярного выражения
+			r'(\w+:\w+)')
+		# Нохождение исходной строки
+		match = patern.search(str_date)
+		while match:
+			# Запись исходной строки
+			minute = int(match[0].split(':')[1])
+			hour = int(match[0].split(':')[0])
+			break
+
+		# Получение года
+		patern = re.compile( # Объявление патерна регулярного выражения
+			r'(\w{4})')
+		# Нохождение исходной строки
+		match = patern.search(str_date)
+		while match:
+			# Запись исходной строки
+			year = str(match[0])
+			break
+
+		# Получение дня
+		patern = re.compile( # Объявление патерна регулярного выражения
+			r'(^\w+)')
+		# Нохождение исходной строки
+		match = patern.search(str_date)
+		while match:
+			# Запись исходной строки
+			day = str(match[0])
+			break
+
+		# Получение месяца
+		patern = re.compile( # Объявление патерна регулярного выражения
+			r'([a-zA-Zа-яА-Я]{3,})')
+		# Нохождение исходной строки
+		match = patern.search(str_date)
+		while match:
+			# Запись исходной строки
+			month = [x for x in range(len(m)) if m[x] == match[0]][0]
+			
+			if month == 0: # В случае если дата указана как сегодня
+				day = datetime.datetime.now().day
+				month = datetime.datetime.now().month
+				year = datetime.datetime.now().year
+			elif year == -1: # В случае если год не был указан в исходной дате
+				if month <= datetime.datetime.now().month:
+					year = datetime.datetime.now().year 
+				else: 
+					year = datetime.datetime.now().year-1
+			break
+		
+	return datetime.datetime(year=year, month=month, day=day, hour=hour, minute=minute)
+# NOTE:Изменено и откомментировано полностью
 def LinkPars(wall_item):
 	"""Получение ссылки на пост"""
 
