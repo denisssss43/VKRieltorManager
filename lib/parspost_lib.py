@@ -367,7 +367,6 @@ def PricePars(description):
 		_old = str(i[0])
 		_new = _old.replace('тыс','000').replace('т','000')
 		description = description.replace(_old, _new)
-		break
 
 	# Поиск цен в описании
 	patern = re.compile( # Объявление патерна регулярного выражения
@@ -416,67 +415,35 @@ def WallItemSearch(country='Россия', city='Красноярск', id_group
 	"""Поиск сырых постов в указанной группе
 	(Без адреса)"""
 
-	groupList = list()
-	groupList.append({'country':'Россия', 'city':'Красноярск', 'id_group':'public105543780'})
-	groupList.append({'country':'Россия', 'city':'Красноярск', 'id_group':'public9751268'})
-
 	# Список обработаных постов
 	_list = list()
+
+	# Указанная группа
+	group = {'country':country, 'city':city, 'id_group':id_group}
 	
-	# Поиск по добавленым группам
-	for group in groupList:
+	# получение идентификатора группы
+	g_ = group['id_group']
+	
+	# Запрос в группу для получения постов
+	response = requests.get('https://m.vk.com/' + g_ + '?offset=' + str(offset)) # + '&own=1')
+	# Подготовка ответа для дальнейшего парса
+	vk_com = BeautifulSoup(response.text, 'html.parser') 
+	# Закрытие ответа
+	response.close() 
+	
+	# Загрузка списка постов
+	for wall_item in vk_com.find_all(class_='wall_item'): 
+		try: 
+			# Парс загруженного поста
+			wall_item = WallItemPars(str(wall_item))
+			# Проверка определения цены 
+			# В сучае, когда цена не определена дальнейшая обработка прекращается
+			if wall_item['price'] < 6000.0: continue
+			# Добавление обработанного поста в список
+			_list.append(wall_item)
+		except: pass
 
-		# получение идентификатора группы
-		g_ = group['id_group']
-		
-		# Запрос в группу для получения постов
-		response = requests.get('https://m.vk.com/' + g_ + '?offset=' + str(offset) + '&own=1')
-
-		# Подготовка ответа для дальнейшего парса
-		vk_com = BeautifulSoup(response.text, 'html.parser') 
-
-		# Закрытие ответа
-		response.close() 
-		
-		# Список обработаных постов
-		_list = list()
-
-		# Загрузка списка постов
-		for wall_item in vk_com.find_all(class_='wall_item'): 
-			try: 
-				# Парс загруженного поста
-				wall_item = WallItemPars(str(wall_item))
-
-				# Проверка определения цены 
-				# В сучае, когда цена не определена дальнейшая обработка прекращается
-				if wall_item['price'] == 0.0: continue
-				
-				wall_item['address'] = AddressFromDescription(
-					wall_item['description'],
-					group['country'],
-					group['city']
-				)
-
-				# Проверка определения адреса 
-				# В сучае, когда адрес не определен дальнейшая обработка прекращается
-				if wall_item['address']['address'] == 'NULL': continue
-
-				# Добавление обработанного поста в список
-				_list.append(wall_item)
-
-				# Вывод информации о посте 
-				# TODO: нужно будет потом удалеить
-				for atr in wall_item.items():
-					if atr[0] == 'address':
-						print(atr[0]+': {')
-						for atr1 in atr[1].items():
-							print('    ',atr1[0]+':', atr1[1])
-						print('}')
-					else: 
-						print(atr[0]+':',atr[1])
-				
-				print('')
-			except: pass
+	return _list
 
 if __name__ == "__main__":
 	# print(
@@ -491,6 +458,19 @@ if __name__ == "__main__":
 	#		country='Россия', 
 	#		city='Красноярск'))
 
-	WallItemSearch(offset=0)
+	for i in range(10):
+		for wall_item in WallItemSearch(offset=i*5):
+				# Вывод информации о посте 
+				# TODO: нужно будет потом удалить
+				print('')
+				for atr in wall_item.items():
+					if atr[0] == 'address':
+						print(atr[0]+': {')
+						for atr1 in atr[1].items():
+							print('    ',atr1[0]+':', atr1[1])
+						print('}')
+					else: 
+						print(atr[0]+':',atr[1])
+				print('===================================================')
 
 	
