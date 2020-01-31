@@ -446,18 +446,6 @@ def WallItemSearch(country='Россия', city='Красноярск', id_group
 	return _list
 
 if __name__ == "__main__":
-	# print(
-	# 	AddressYandex(
-	# 		"Крас раб 102", 
-	# 		country='Россия', 
-	# 		city='Красноярск'))
-
-	#print(
-	#	AddressFromDescription(
-	#		Адрес: г. Красноярск, ул. Белинского, д. 3", 
-	#		country='Россия', 
-	#		city='Красноярск'))
-
 	for i in range(10):
 		for wall_item in WallItemSearch(offset=i*5):
 				# Вывод информации о посте 
@@ -472,5 +460,3 @@ if __name__ == "__main__":
 					else: 
 						print(atr[0]+':',atr[1])
 				print('===================================================')
-
-	
