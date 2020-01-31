@@ -3,11 +3,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re 
-import uuid
 from datetime import datetime, timedelta
-from contextlib import closing
-import ast 
-import copy 
 import datetime
 
 # NOTE:Изменено и откомментировано полностью
