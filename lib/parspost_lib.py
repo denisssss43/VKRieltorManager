@@ -423,14 +423,17 @@ def WallItemPars(wall_item=''):
 			'hashtags': hashtags}				# Получение телефонных номеров
 
 # NOTE:Изменено и откомментировано полностью
-def WallItemSearch(offset=0):
-	"""Поиск сырых постов в указанных группах
+def WallItemSearch(country='Россия', city='Красноярск', id_group='public9751268', offset=0):
+	"""Поиск сырых постов в указанной группе
 	(Без адреса)"""
 
 	groupList = list()
 	groupList.append({'country':'Россия', 'city':'Красноярск', 'id_group':'public105543780'})
 	groupList.append({'country':'Россия', 'city':'Красноярск', 'id_group':'public9751268'})
 
+	# Список обработаных постов
+	_list = list()
+	
 	# Поиск по добавленым группам
 	for group in groupList:
 
