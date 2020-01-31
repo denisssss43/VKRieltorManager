@@ -356,45 +356,34 @@ def LinkPars(wall_item):
 def PricePars(description):
 	"""Получение стоимости предложения из описания"""
 
-	price = 0.0
+	# Список найденых цен в описании
+	price = list()
 
-	paternPrice = re.compile( # Объявление патерна регулярного выражения
-		r'(\W|\D)[0-9]{1,3}[., ]{0,3}[0-9]{3}(\W|\D)')
-		
-	# Запись исходной строки найденого номера в описании
-	match = paternPrice.search(description)
-	while match:
-		# Запись исходной строки найденого номера в описании
-		string = str(match[0])
-		# отчистка описания от посторонних символов
-		for char in string:
-			if ('1234567890'.find(char.lower()) == -1): 
-				string = string.replace(char, '')
-		price = float(string)
-		break
-
-	if price != 0.0: return price
-
-	match = re.search(r'(\d|\s)(тыс|т)[., ]{1,3}', description)
-	while match:
-		# Запись исходной строки найденого номера в описании
-		_old = str(match[0])
+	# Нормализация цен в описании
+	patern = re.compile( # Объявление патерна регулярного выражения
+		r'((\d|\s)(тыс|т)[., ]{1,3})')
+	match = patern.findall(description)
+	for i in match:
+		_old = str(i[0])
 		_new = _old.replace('тыс','000').replace('т','000')
 		description = description.replace(_old, _new)
 		break
 
-	match = paternPrice.search(description)
-	while match:
-		# Запись исходной строки найденого номера в описании
-		string = str(match[0])
-		# отчистка описания от посторонних символов
+	# Поиск цен в описании
+	patern = re.compile( # Объявление патерна регулярного выражения
+		r'((\W|\D)[0-9]{1,3}[., ]{0,3}[0-9]{3}(\W|\D))')
+	# Запись исходной строки найденого номера в описании
+	match = patern.findall(description)
+	for i in match:
+		# Запись исходной найденной в описании
+		string = str(i[0])
+		# отчистка исходной строки от посторонних символов
 		for char in string:
 			if ('1234567890'.find(char.lower()) == -1): 
 				string = string.replace(char, '')
-		price = float(string)
-		break
-	#
-	return price
+		price.append(float(string))
+	# Возврат максимальной цены
+	return max(price)
 # NOTE:Изменено и откомментировано полностью
 def WallItemPars(wall_item=''):
 	"""Парсинг поста сообщества"""
