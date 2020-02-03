@@ -4,7 +4,7 @@ USE test; -- Указание субд работать с определенн�
 
 -- Создание хранимых процедур
 
-CREATE PROCEDURE PROCEDURE `sp_addPost`( -- Процедура добавление сырого (Без адреса) поста в БД 
+CREATE PROCEDURE `sp_addPost`( -- Процедура добавления сырого (Без адреса) поста в БД 
     `countryTitle` nvarchar(144), -- Наименование страны в которой актуален этот пост
     `cityTitle` nvarchar(144), -- Наименование города в котором актуален этот пост
 	`url` NVARCHAR(256), -- URL-ссылка на пост
@@ -19,12 +19,12 @@ BEGIN
 	declare `_uuid_post` nvarchar(36); -- Переменная для хранения uuid поста
 	declare `_uuid_country` nvarchar(36); -- Переменная для хранения uuid страны
 	declare `_uuid_city` nvarchar(36); -- Переменная для хранения uuid города
-	declare `_uuid_link` nvarchar(36); -- Переменная для хранения uuid url-ссылки
+	declare `_uuid_url` nvarchar(36); -- Переменная для хранения uuid url-ссылки
 	declare `_uuid_community` nvarchar(36); -- Переменная для хранения uuid сообщества
 	-- declare `_uuid_address` nvarchar(36); -- Переменная для хранения uuid географического адреса
 
-    -- Получение uuid для запиcи объявление
-    set `_uuid_post` = (
+    
+    set `_uuid_post` = ( -- Получение uuid для запиcи объявление
 		SELECT `post`.`uuid` 
 		FROM `post` 
         WHERE `post`.`description` LIKE `description` 
@@ -122,26 +122,65 @@ BEGIN
 			`communityTitle`);
 	end if;
 
-    set `_uuid_link` = ( -- Получение uuid записи url-адреса
+    set `_uuid_url` = ( -- Получение uuid записи url-адреса
 		SELECT `link`.`uuid` 
 		FROM `link` 
 		WHERE `link`.`title` = `link`);
 
-    if `_uuid_link` IS NULL THEN -- Если запись не создана ранее
-		set `_uuid_link` = UUID(); -- Генерация uuid для новой записи url-адреса
+    if `_uuid_url` IS NULL THEN -- Если запись не создана ранее
+		set `_uuid_url` = UUID(); -- Генерация uuid для новой записи url-адреса
 		INSERT INTO `link` (
 			`uuid`, 
-			`title`,
+			`url`,
 			`datetime`, 
 			`uuid_community`, 
 			`uuid_post`)
 		VALUES (
-			`_uuid_link`, 
+			`_uuid_url`, 
 			`link`, 
 			`datetime`, 
 			`_uuid_community`, 
 			`_uuid_post`);
 	end if;
+END
+
+CREATE PROCEDURE `sp_addTelephone`( -- Процедура добавления телефонного номера 
+	`uuid_post` nvarchar(36), -- uuid поста к которому будет прикреплен номер телефона
+	`telephone` nvarchar(16)) -- номер телефона
+BEGIN
+	declare `_uuid_telephone` nvarchar(36); -- Переменная для хранения uuid телефона
+	declare `_is_telephone__post` TINYINT(1); -- Существует ли связь для текущего телефона и поста 
+	
+	set _uuid_telephone = ( -- Получение uuid записи телефонного номера
+		SELECT `telephone`.`uuid` 
+		FROM `telephone` 
+		WHERE `telephone`.`number` LIKE telephone);
+
+    IF _uuid_telephone IS NULL THEN	-- Если телефонный номер не был добавлен
+		set _uuid_telephone = UUID(); -- Генерация uuid для записи телефонного номера
+		INSERT INTO `telephone` ( -- Добавление записи телефонного номера
+			`uuid`, 
+			`number`) 
+		VALUES (
+			_uuid_telephone, 
+			telephone);
+	end IF;	
+    
+    set `_is_telephone__post` = ( -- Проверка наличия свизи добавляемого телефона и объявления
+		SELECT COUNT(*) 
+		FROM `telephone__post` 
+		WHERE `telephone__post`.`uuid_telephone` LIKE _uuid_telephone
+		AND `telephone__post`.`uuid_post` LIKE _uuid_post
+		LIMIT 1);
+
+    IF _uuid_telephone__post = 0 THEN -- Если связь отсутствует
+        INSERT INTO `telephone__post` ( -- Добавление связи телефонного номера с постом
+			`uuid_telephone`, 
+			`uuid_post`)
+        VALUES (
+			_uuid_telephone, 
+			_uuid_post);
+	end IF;	
 END
 
 -- Создание функций
@@ -174,9 +213,20 @@ CREATE FUNCTION `f_lastestPostURL`( -- Функция поиска послед�
 	RETURNS NVARCHAR(256) CHARSET utf8 -- Тип возвращаемых данных
 BEGIN
 	RETURN (
-		SELECT `title` 
+		SELECT `url` 
 		FROM `link` 
 		WHERE `link`.`uuid_post` LIKE `uuid_post` 
 		ORDER BY `datetime` DESC 
+		LIMIT 1);
+END
+
+CREATE FUNCTION `f_URLToPostUUID`( -- Функция поиска последней url-ссылки для поста
+	`url` NVARCHAR(256)) -- Параметр uuid поста
+	RETURNS NVARCHAR(36) CHARSET utf8 -- Тип возвращаемых данных
+BEGIN
+	RETURN (
+		SELECT `uuid_post` 
+		FROM `link` 
+		WHERE `link`.`url` LIKE `url`
 		LIMIT 1);
 END
