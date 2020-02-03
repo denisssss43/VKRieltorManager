@@ -19,7 +19,7 @@ CREATE TABLE city ( -- таблица городов
 CREATE TABLE address ( -- таблица адреcов
 	uuid NVARCHAR(36) NOT NULL UNIQUE, -- Уникальный идентификатор
 	uuid_city NVARCHAR(36) NULL, -- Ссылка на запись в таблице городов
-	title NVARCHAR(144) NULL, -- Название
+	title NVARCHAR(128) NULL, -- Полный адресс в текстовом формате без указания города и страны
 	PRIMARY KEY (uuid)); -- Указание на поле первичного ключа
    
 CREATE TABLE post ( -- таблица объявлений
