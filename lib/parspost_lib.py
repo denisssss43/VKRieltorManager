@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import re 
 from datetime import datetime, timedelta
 import datetime
+from db_lib import AddPost, CloseConnect, Connect
 
 # NOTE:Изменено и откомментировано полностью
 def AddressYandex(string, country='Россия', city='Красноярск'):
@@ -89,7 +90,11 @@ def DescriptionPars(wall_item):
 	"""Получение описания из записи поста"""
 
 	# Обработка описания
-	pi_text = str(BeautifulSoup(wall_item, 'html.parser').find_all(class_='pi_text')[0])
+	pi_text_list = BeautifulSoup(wall_item, 'html.parser').find_all(class_='pi_text')
+
+	if len(pi_text_list) < 1: return ' '
+
+	pi_text = str(pi_text_list[0])
 
 	# Отчистка от раскрытия полного текста
 	for pi_text_more in BeautifulSoup(wall_item,'html.parser').find_all(class_='pi_text_more'): 
@@ -269,7 +274,7 @@ def DatePars(wall_item):
 	"""Получение даты публикации поста"""
 
 	# Список всех сокращений в дате вк
-	m = "дек ноя окт сен авг июл июн мая апр мар фев янв сегодня".split(' ')[::-1]
+	m = "дек ноя окт сен авг июл июн мая апр мар фев янв вчера сегодня".split(' ')[::-1]
 	# Исходная строка с датой
 	str_date = ''
 	# Определенное значение минут
@@ -289,6 +294,8 @@ def DatePars(wall_item):
 		# Получение не обработанной даты
 		str_date = str(wi_date.get_text())
 
+		# print(str_date)
+
 		# Получение времени
 		patern = re.compile( # Объявление патерна регулярного выражения
 			r'(\w+:\w+)')
@@ -299,7 +306,7 @@ def DatePars(wall_item):
 			minute = int(match[0].split(':')[1])
 			hour = int(match[0].split(':')[0])
 			break
-
+	
 		# Получение года
 		patern = re.compile( # Объявление патерна регулярного выражения
 			r'(\w{4})')
@@ -328,18 +335,39 @@ def DatePars(wall_item):
 		while match:
 			# Запись исходной строки
 			month = [x for x in range(len(m)) if m[x] == match[0]][0]
+
+			# print('1 month', month)
 			
 			if month == 0: # В случае если дата указана как сегодня
 				day = datetime.datetime.now().day
 				month = datetime.datetime.now().month
 				year = datetime.datetime.now().year
-			elif year == -1: # В случае если год не был указан в исходной дате
+			if month == 1: # В случае если дата указана как вчера
+				# Получение вчерашней даты
+				date = datetime.datetime.now() - datetime.timedelta(days=1)
+				day = date.day
+				month = date.month
+				year = date.year
+			else: month = month - 1
+			
+			if year == -1: # В случае если год не был указан в исходной дате
 				if month <= datetime.datetime.now().month:
 					year = datetime.datetime.now().year 
 				else: 
 					year = datetime.datetime.now().year-1
+
+			# print('2 month', month)
 			break
-		
+
+		year = int(year)
+		month = int(month)
+		day = int(day)
+		hour = int(hour)
+		minute = int(minute)
+
+		# print('year',year, 'month',month, 'day',day, 'hour',hour, 'minute',minute)
+		# print(datetime.datetime(year=year, month=month, day=day, hour=hour, minute=minute))
+
 	return datetime.datetime(year=year, month=month, day=day, hour=hour, minute=minute)
 # NOTE:Изменено и откомментировано полностью
 def LinkPars(wall_item):
@@ -377,6 +405,9 @@ def PricePars(description):
 			if ('1234567890'.find(char.lower()) == -1): 
 				string = string.replace(char, '')
 		price.append(float(string))
+
+	if len(price) < 1: return 0.0
+	
 	# Возврат максимальной цены
 	return max(price)
 # NOTE:Изменено и откомментировано полностью
@@ -396,6 +427,7 @@ def WallItemPars(wall_item=''):
 	description = DescriptionClean(description)
 
 	return {'date': DatePars(wall_item), 		# Получение даты публикации
+			'link_community': '',				# Ссылка на сообщество
 			'link': LinkPars(wall_item),		# Получение ссылки на запись во вкантакте
 			'description': description,			# Описание 
 			'price': PricePars(description),	# Цена предложения
@@ -432,30 +464,48 @@ def WallItemSearch(country='Россия', city='Красноярск', id_group
 	
 	# Загрузка списка постов
 	for wall_item in vk_com.find_all(class_='wall_item'): 
-		try: 
-			# Парс загруженного поста
-			wall_item = WallItemPars(str(wall_item))
-			# Проверка определения цены 
-			# В сучае, когда цена не определена дальнейшая обработка прекращается
-			if wall_item['price'] < 6000.0: continue
-			# Добавление обработанного поста в список
-			_list.append(wall_item)
-		except: pass
+		# try: 
+		# Парс загруженного поста
+		wall_item = WallItemPars(str(wall_item))
+		# Проверка определения цены 
+		# В сучае, когда цена не определена дальнейшая обработка прекращается
+		if wall_item['price'] < 6000.0: continue
+		wall_item['link_community'] = g_
+		# Добавление обработанного поста в список
+		_list.append(wall_item)
+		# except: pass
 
 	return _list
 
 if __name__ == "__main__":
-	for i in range(10):
+	Connect()
+
+	for i in range(0,1000):
 		for wall_item in WallItemSearch(offset=i*5):
-				# Вывод информации о посте 
-				# TODO: нужно будет потом удалить
-				print('')
-				for atr in wall_item.items():
-					if atr[0] == 'address':
-						print(atr[0]+': {')
-						for atr1 in atr[1].items():
-							print('    ',atr1[0]+':', atr1[1])
-						print('}')
-					else: 
-						print(atr[0]+':',atr[1])
-				print('===================================================')
+			# Вывод информации о посте 
+			# TODO: нужно будет потом удалить
+
+			print('')
+
+			# for atr in wall_item.items():
+			# 	if atr[0] == 'address':
+			# 		print(atr[0]+': {')
+			# 		for atr1 in atr[1].items():
+			# 			print('    ',atr1[0]+':', atr1[1])
+			# 		print('}')
+			# 	else: 
+			# 		print(str(atr[0])+':',str(atr[1]))
+
+			print('date',wall_item['date'])
+			print('link',wall_item['link'])
+
+			AddPost(
+				wall_item['link_community'],
+				wall_item['description'],
+				wall_item['date'],
+				wall_item['price'],
+				wall_item['link'])
+
+			print('===================================================')
+	
+	CloseConnect()
