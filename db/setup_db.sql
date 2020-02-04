@@ -33,7 +33,7 @@ CREATE TABLE `post` ( /* таблица объявлений */
 
 CREATE TABLE `community` ( /* таблица cообщеcтв */
 	`uuid` NVARCHAR(36) NOT NULL UNIQUE, /* Уникальный идентификатор */
-	`title` NVARCHAR(256) NULL, /* Наименование сообщества */
+	`url` NVARCHAR(256) NULL, /* URL-адрес сообщества */
 	PRIMARY KEY (`uuid`)); /* Указание на поле первичного ключа */
 
 CREATE TABLE `link` ( /* таблица ccылок на поcт */

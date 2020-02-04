@@ -5,7 +5,7 @@ USE test; # Указание субд работать с определенно
 # Создание хранимых процедур
 DELIMITER $$
 CREATE PROCEDURE `sp_addPost`( /* Процедура добавления сырого (Без адреса) поста в БД */
-	`communityTitle` NVARCHAR(256), /* Ноименование сообщество в котором был найден пост */
+	`communityURL` NVARCHAR(256), /* Ноименование сообщество в котором был найден пост */
 	`description` NVARCHAR(512), /* Полное описание, указанное в посте (от редактированное) */
 	`datetime` DATETIME, /* Дата публикации записи */
 	`price` float, /* Цена предложения указанного в посте */
@@ -41,7 +41,7 @@ BEGIN
 	set `_uuid_community` = ( /* Получение uuid записи сообщества */
 		SELECT `community`.`uuid` 
 		FROM `community` 
-		WHERE `community`.`title` = `communityTitle`);
+		WHERE `community`.`url` = `communityURL`);
 
 	if `_uuid_community` IS NULL THEN /* Если запись не создана ранее */
 		set `_uuid_community` = UUID(); /* Генерация ного uuid для записи сообщества */
@@ -50,7 +50,7 @@ BEGIN
 			`title`)
 		VALUES (
 			`_uuid_community`, 
-			`communityTitle`);
+			`communityURL`);
 	end if;
 
 	set `_uuid_url` = ( /* Получение uuid записи url-адреса */
