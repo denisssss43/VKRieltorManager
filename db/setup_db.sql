@@ -61,26 +61,26 @@ CREATE TABLE `telephone__post` ( /* таблица cвязи телефонов 
 ALTER TABLE `link` ADD CONSTRAINT `link__community` /* Связь таблиц url-ссылок и сообществ */
 	FOREIGN KEY (`uuid_community`) /* Поле со ссылкой */
 	REFERENCES `community` (`uuid`) /* Поле на которое ссылается */
-	ON DELETE SET NULL /* Действия при удалении */
+	ON DELETE NO ACTION /* Действия при удалении */
 	ON UPDATE NO ACTION; /* Действяи при обновлении */
 ALTER TABLE `link` ADD CONSTRAINT `link__post` /* Связь таблиц url-ссылок и объявлений */
 	FOREIGN KEY (`uuid_post`) /* Поле со ссылкой */
 	REFERENCES `post` (`uuid`) /* Поле на которое ссылается */
-	ON DELETE SET NULL /* Действие при удалении */
+	ON DELETE NO ACTION /* Действие при удалении */
 	ON UPDATE NO ACTION; /* ДЕйствие при обновлении */
 
 # Внешние ключи для таблицы географических адресов
 ALTER TABLE `address` ADD CONSTRAINT `address__city` /* Связь таблиц географических адресов и городов */
 	FOREIGN KEY (`uuid_city`) /* Поле со ссылкой */
 	REFERENCES `city` (`uuid`) /* Поле на которое ссылается */
-	ON DELETE SET NULL /* Действие при удалении */
+	ON DELETE NO ACTION /* Действие при удалении */
 	ON UPDATE NO ACTION; /* ДЕйствие при обновлении */
 
 # Внешние ключи для таблицы объявлений
 ALTER TABLE `post` ADD CONSTRAINT `post__address` /* Связь таблиц объявлений и географических адресов */
 	FOREIGN KEY (`uuid_address`) /* Поле со ссылкой */
 	REFERENCES `address` (`uuid`) /* Поле на которое ссылается */
-	ON DELETE SET NULL /* Действие при удалении */
+	ON DELETE NO ACTION /* Действие при удалении */
 	ON UPDATE NO ACTION; /* ДЕйствие при обновлении */
 # Внешние ключи для таблицы связей телефонных_номеров_и_объявлений */
 ALTER TABLE `telephone__post` ADD CONSTRAINT `telephone__post__telephone` /* Связь таблиц связей телефонных_номеров_и_объявлений и телефонных номеров */
