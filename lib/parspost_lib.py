@@ -147,6 +147,8 @@ def DescriptionPars(wall_item):
 def DescriptionClean(description):
 	"""Итоговая отчистка и нормализация описания"""
 
+	if len(description) < 1: return description
+
 	# Отчистка описания от номеров телефонов
 	paternTelephones = re.compile( # Объявление патерна регулярного выражения
 		r'(\s*)?(\+)?([- _():=+]?\d[- _():=+]?){10,14}(\s*)?')
@@ -204,7 +206,8 @@ def DescriptionClean(description):
 		description = description.replace(str(match[0]),str(match[0]).replace(' ',''))
 		# Поиск следующей исходной строки в описании
 		match = paternDate.search(description)
-	
+
+	if len(description) < 1: return description
 	if description[0] == ' ': description = description.replace(' ', '', 1)
 
 	return description
@@ -480,12 +483,15 @@ def WallItemSearch(country='Россия', city='Красноярск', id_group
 if __name__ == "__main__":
 	Connect()
 
-	for i in range(0,1000):
+	for i in range(1707,2000):
+
+		print('\n i',i)
+
 		for wall_item in WallItemSearch(offset=i*5):
 			# Вывод информации о посте 
 			# TODO: нужно будет потом удалить
 
-			print('')
+			print('\n i',i)
 
 			# for atr in wall_item.items():
 			# 	if atr[0] == 'address':
