@@ -71,7 +71,7 @@ BEGIN
 			_url, 
 			_datetime, 
 			_uuid_community, 
-			NULL);
+			_uuid_post);
 	end if;
 END$$
 DELIMITER ;
