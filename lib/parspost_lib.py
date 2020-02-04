@@ -407,7 +407,7 @@ def WallItemPars(wall_item=''):
 			'hashtags': hashtags}				# Получение телефонных номеров
 
 # NOTE:Изменено и откомментировано полностью
-def WallItemSearch(country='Россия', city='Красноярск', id_group='public9751268', offset=0):
+def WallItemSearch(country='Россия', city='Красноярск', id_group='public9751268', url_group='https://m.vk.com/public9751268', offset=0):
 	"""Поиск сырых постов в указанной группе
 	(Без адреса)"""
 
@@ -415,13 +415,16 @@ def WallItemSearch(country='Россия', city='Красноярск', id_group
 	_list = list()
 
 	# Указанная группа
-	group = {'country':country, 'city':city, 'id_group':id_group}
+	group = {'country':country, 'city':city, 'id_group':id_group, 'url_group':url_group}
 	
 	# получение идентификатора группы
-	g_ = group['id_group']
+	if url_group == '':
+		g_ = 'https://m.vk.com/' + group['id_group']
+	else:
+		g_ = group['url_group']
 	
 	# Запрос в группу для получения постов
-	response = requests.get('https://m.vk.com/' + g_ + '?offset=' + str(offset)) # + '&own=1')
+	response = requests.get(g_ + '?offset=' + str(offset)) # + '&own=1')
 	# Подготовка ответа для дальнейшего парса
 	vk_com = BeautifulSoup(response.text, 'html.parser') 
 	# Закрытие ответа
