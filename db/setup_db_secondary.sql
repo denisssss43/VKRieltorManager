@@ -47,7 +47,7 @@ BEGIN
 		set `_uuid_community` = UUID(); /* Генерация ного uuid для записи сообщества */
 		INSERT INTO `community` ( /* Добавление записи сообщества */
 			`uuid`, 
-			`title`)
+			`url`)
 		VALUES (
 			`_uuid_community`, 
 			`communityURL`);
