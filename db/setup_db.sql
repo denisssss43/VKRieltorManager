@@ -26,7 +26,7 @@ CREATE TABLE `address` ( /* таблица адреcов */
 CREATE TABLE `post` ( /* таблица объявлений */
 	`uuid` NVARCHAR(36) NOT NULL UNIQUE, /* Уникальный идентификатор */
 	`uuid_address` NVARCHAR(36) NULL, /* Ссылка на географический адресс объявления */
-	`description` NVARCHAR(512) NULL, /* Описание объявление */
+	`description` NVARCHAR(1024) NULL, /* Описание объявление */
 	`price` FLOAT NULL, /* Стоимость, указанная в объявлении */
 	`isHidden` TINYINT(1) NULL DEFAULT 1, /* Скрывает запись в случае если объявление не корректно */
 	PRIMARY KEY (`uuid`)); /* Указание на поле первичного ключа */
