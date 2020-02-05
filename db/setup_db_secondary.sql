@@ -40,8 +40,8 @@ BEGIN
 	end if;
 
 	UPDATE `post` /* Обновление статуса для добавления телефонного номера */
-	SET `uuid` = _uuid_post
-	WHERE `status` = 2;
+	SET `status` = 2;
+	WHERE `uuid` = _uuid_post
 
 	set _uuid_community = ( /* Получение uuid записи сообщества */
 		SELECT `community`.`uuid` 
