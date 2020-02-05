@@ -34,12 +34,26 @@ def GetGroups():
 	pass
 
 
-def AddPost(communityURL='', description='', dateTime=datetime.now(), price=0.0, url=''):
+def AddPost(communityURL='', description='', dateTime=datetime.now(), price=0.0, url='', telephones=[]):
 	"""Добавление поста в БД"""
-
+	result = None
 	if connection != None: # Если подключение создано
 		with connection.cursor() as cursor:
 			cursor.execute("call test.sp_addPost('"+str(communityURL)+"','"+str(description)[:1024]+"','"+str(dateTime)+"',"+str(price)+",'"+str(url)+"');")
+			result = cursor.fetchone()
+			for num in telephones:
+				AddTelephone(result['uuid'], str(num))
+				print(result['uuid'], str(num))
+			connection.commit()
+
+	return result
+
+def AddTelephone(uuid_post='',telephone=''):
+	"""Добавление телефона в БД"""
+
+	if connection != None: # Если подключение создано
+		with connection.cursor() as cursor:
+			cursor.execute("call test.sp_addTelephone('"+str(uuid_post)+"', '"+str(telephone)+"');")
 			connection.commit()
 	pass
 
@@ -53,7 +67,4 @@ def AddAddress(uuid_post='', countryTitle='', cityTitle='', addressTitle='', lat
 			cursor.execute("call test.sp_addAddress('"+str(uuid_post)+"', '"+str(countryTitle)+"', '"+str(cityTitle)+"', " + addressTitle + ", "+str(latitude)+", "+str(longitude)+");")
 			connection.commit()
 	
-def AddTelephone():
-	"""Добавление телефона в БД"""
-	# call test.sp_addTelephone('qwe', 'we');
 	pass
