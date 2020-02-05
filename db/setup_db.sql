@@ -47,6 +47,7 @@ DROP TABLE IF EXISTS `community`;
 CREATE TABLE `community` ( /* таблица cообщеcтв */
 	`id` INT AUTO_INCREMENT NOT NULL UNIQUE, /* Порядковый номер записи в таблице */
 	`uuid` NVARCHAR(36) NOT NULL UNIQUE, /* Уникальный идентификатор */
+	`uuid_city` NVARCHAR(36) NULL, /* Ссылка на запись в таблице городов */
 	`url` NVARCHAR(256) NULL, /* URL-адрес сообщества */
 	PRIMARY KEY (`uuid`)); /* Указание на поле первичного ключа */
 

@@ -55,21 +55,10 @@ BEGIN
 		WHERE `uuid` = _uuid_post;
 	END IF;
 
-
 	SET _uuid_community = ( /* Получение uuid записи сообщества */
 		SELECT `community`.`uuid` 
 		FROM `community` 
 		WHERE `community`.`url` = _communityURL);
-
-	IF _uuid_community IS NULL THEN /* Если запись не создана ранее */
-		SET _uuid_community = UUID(); /* Генерация ного uuid для записи сообщества */
-		INSERT INTO `community` ( /* Добавление записи сообщества */
-			`uuid`, 
-			`url`)
-		VALUES (
-			_uuid_community, 
-			_communityURL);
-	END IF;
 
 	SET _uuid_url = ( /* Получение uuid записи url-адреса */
 		SELECT `link`.`uuid` 
@@ -220,6 +209,74 @@ BEGIN
 	SET `uuid_address` = _uuid_address, `status` = _status
 	WHERE `uuid` = _uuid_post;
 END$$
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS sp_addCommunity;
+CREATE PROCEDURE sp_addCommunity( /* Процедура добавления группы */
+	_countryTitle nvarchar(144), /* Наименование страны */
+	_cityTitle nvarchar(144), /* Наименование города */
+	_communityURL NVARCHAR(256)) /* Ссылка на сообщество */
+BEGIN
+	DECLARE _uuid_country nvarchar(36); /* Переменная для хранения uuid страны */
+	DECLARE _uuid_city nvarchar(36); /* Переменная для хранения uuid города */
+	DECLARE _uuid_community nvarchar(36); /* Переменная для хранения uuid сообщества */
+	
+	SET _uuid_country = ( /* Получение uuid для запиcи города */
+		SELECT `country`.`uuid` 
+		FROM `country`
+		WHERE `country`.`title` = _countryTitle
+		LIMIT 1);
+	IF _uuid_country IS NULL THEN /* Если страна не была ранее добавлена */
+		IF _countryTitle IS NOT NULL THEN /* Если передано наименование страны */
+			SET _uuid_country = UUID(); /* Генерация нового uuid для записи города */
+			INSERT INTO `country` ( /* Добавление записи города */
+				`uuid`, 
+				`title`)
+			VALUES (
+				_uuid_country, 
+				_countryTitle);
+		END IF;
+	END IF;
+	    
+	SET _uuid_city = ( /* Получение uuid для запиcи города */
+		SELECT `city`.`uuid` 
+		FROM `city`
+		WHERE `city`.`title` = _cityTitle
+		LIMIT 1);
+	IF _uuid_city IS NULL THEN /* Если город не был ранее добавлен */
+		IF _cityTitle IS NOT NULL THEN /* Если передано наименование города */
+			SET _uuid_city = UUID(); /* Генерация нового uuid для записи города */
+			INSERT INTO `city` ( /* Добавление записи города */
+				`uuid`,
+				`uuid_country`, 
+				`title`)
+			VALUES (
+				_uuid_city,
+				_uuid_country, 
+				_cityTitle);
+		END IF;
+	END IF;
+
+	SET _uuid_community = ( /* Получение uuid записи сообщества */
+		SELECT `community`.`uuid` 
+		FROM `community` 
+		WHERE `community`.`url` = _communityURL);
+
+	IF _uuid_community IS NULL THEN /* Если запись не создана ранее */
+		SET _uuid_community = UUID(); /* Генерация ного uuid для записи сообщества */
+		INSERT INTO `community` ( /* Добавление записи сообщества */
+			`uuid`, 
+			`uuid_city`, 
+			`url`)
+		VALUES (
+			_uuid_community, 
+			_uuid_city, 
+			_communityURL);
+	END IF;
+
+	SELECT _uuid_community AS uuid;
+END$$
+
 
 # Создание функций
 DELIMITER $$
