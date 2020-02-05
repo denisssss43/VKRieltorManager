@@ -43,12 +43,17 @@ def AddPost(communityURL='', description='', dateTime=datetime.now(), price=0.0,
 			connection.commit()
 	pass
 
-def AddAddress():
+def AddAddress(uuid_post='', countryTitle='', cityTitle='', addressTitle='', latitude=0.0, longitude=0.0):
 	"""Добавление адреса в БД"""
 	# call test.sp_addAddress('qwe', 'qwe', 'qwe', 'qwe', qwe, qwe);
-	
-	pass
 
+	if connection != None: # Если подключение создано
+		addressTitle = str(addressTitle) if addressTitle=='NULL' else ("'"+str(addressTitle)+"'")
+		print(addressTitle)
+		with connection.cursor() as cursor:
+			cursor.execute("call test.sp_addAddress('"+str(uuid_post)+"', '"+str(countryTitle)+"', '"+str(cityTitle)+"', " + addressTitle + ", "+str(latitude)+", "+str(longitude)+");")
+			connection.commit()
+	
 def AddTelephone():
 	"""Добавление телефона в БД"""
 	# call test.sp_addTelephone('qwe', 'we');
