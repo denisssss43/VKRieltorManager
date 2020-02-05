@@ -28,15 +28,19 @@ BEGIN
 			`uuid`, 
 			`description`,
 			`price`, 
-			`isHidden`, 
+			`status`, 
 			`uuid_address`)
 		VALUES (
 			_uuid_post, 
 			_description, 
 			_price, 
-			1, 
+			2, 
 			NULL);	
 	end if;
+
+	UPDATE `post` /* Обновление статуса для добавления телефонного номера */
+	SET `uuid` = _uuid_post
+	WHERE `status` = 2;
 
 	set _uuid_community = ( /* Получение uuid записи сообщества */
 		SELECT `community`.`uuid` 
@@ -73,6 +77,8 @@ BEGIN
 			_uuid_community, 
 			_uuid_post);
 	end if;
+
+	SELECT _uuid_post /* Возврат uuid поста */
 END$$
 DELIMITER ;
 
@@ -118,8 +124,8 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE sp_addAddress(
-	_uuid_post nvarchar(36), /* uuid поста к которому будет прикреплен номер телефона */
+CREATE PROCEDURE sp_addAddress( /* Процедура добавления адреса */
+	_uuid_post nvarchar(36), /* uuid поста к которому будет прикреплен адрес */
 	_countryTitle nvarchar(144), /* Наименование страны в которой актуален этот пост */
 	_cityTitle nvarchar(144), /* Наименование города в котором актуален этот пост */
 	_addressTitle NVARCHAR(128), /* Географический адресс, указанный в посте */
@@ -129,6 +135,12 @@ BEGIN
 	declare _uuid_country nvarchar(36); /* Переменная для хранения uuid страны */
 	declare _uuid_city nvarchar(36); /* Переменная для хранения uuid города */
 	declare _uuid_address nvarchar(36); /* Переменная для хранения uuid географического адреса */
+	declare _status int; /* Переменная статуса изменяемого поста */
+
+	set _status = 1; /* Указание статуса корректного поста */
+	IF _uuid_address IS NULL THEN /* Если адрес не был указан */
+		set _status = 0; /* Указание статуса некорректного поста */
+	end if;
 	
 	set _uuid_country = ( /* Получение uuid для запиcи города */
 		SELECT `country`.`uuid` 
@@ -186,7 +198,8 @@ BEGIN
 	end if;
 	
 	UPDATE `post`
-	SET `uuid_address` = _uuid_address
+	SET `uuid_address` = _uuid_address,
+		`status` = _status,
 	WHERE `uuid` = _uuid_post;
 END$$
 DELIMITER ;
