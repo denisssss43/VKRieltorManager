@@ -45,7 +45,6 @@ def AddPost(communityURL='', description='', dateTime=datetime.now(), price=0.0,
 
 def AddAddress(uuid_post='', countryTitle='', cityTitle='', addressTitle='', latitude=0.0, longitude=0.0):
 	"""Добавление адреса в БД"""
-	# call test.sp_addAddress('qwe', 'qwe', 'qwe', 'qwe', qwe, qwe);
 
 	if connection != None: # Если подключение создано
 		addressTitle = str(addressTitle) if addressTitle=='NULL' else ("'"+str(addressTitle)+"'")
