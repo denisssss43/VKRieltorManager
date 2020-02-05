@@ -3,6 +3,7 @@
 USE test; # Указание субд работать с определенной БД
 
 # Создание хранимых процедур
+DROP PROCEDURE IF EXISTS sp_addPost;
 DELIMITER $$
 CREATE PROCEDURE sp_addPost( /* Процедура добавления сырого (Без адреса) поста в БД */
 	_communityURL NVARCHAR(256), /* Ноименование сообщество в котором был найден пост */
@@ -80,8 +81,8 @@ BEGIN
 
 	SELECT _uuid_post /* Возврат uuid поста */
 END$$
-DELIMITER ;
 
+DROP PROCEDURE IF EXISTS sp_addTelephone;
 DELIMITER $$
 CREATE PROCEDURE sp_addTelephone( /* Процедура добавления телефонного номера */
 	_uuid_post nvarchar(36), /* uuid поста к которому будет прикреплен номер телефона */
@@ -121,8 +122,8 @@ BEGIN
 			_uuid_post);
 	end IF;	
 END$$
-DELIMITER ;
 
+DROP PROCEDURE IF EXISTS sp_addAddress;
 DELIMITER $$
 CREATE PROCEDURE sp_addAddress( /* Процедура добавления адреса */
 	_uuid_post nvarchar(36), /* uuid поста к которому будет прикреплен адрес */
@@ -202,9 +203,9 @@ BEGIN
 		`status` = _status
 	WHERE `uuid` = _uuid_post;
 END$$
-DELIMITER ;
 
 # Создание функций
+DROP FUNCTION IF EXISTS f_address_uuidToText;
 DELIMITER $$
 CREATE FUNCTION f_address_uuidToText( /* Функция конвертации uuid адреса в текстовое представление */
 	_uuid_address NVARCHAR(36)) /* Параметр uuid адреса */
@@ -216,8 +217,8 @@ BEGIN
 		WHERE `address`.`uuid` LIKE _uuid_address
 		LIMIT 1);
 END$$
-DELIMITER ;
 
+DROP FUNCTION IF EXISTS f_lastestPostDateTime;
 DELIMITER $$
 CREATE FUNCTION f_lastestPostDateTime( /* Функция поиска последней даты для поста */
 	_uuid_post NVARCHAR(36)) /* Параметр uuid поста */
@@ -230,8 +231,8 @@ BEGIN
 		ORDER BY `datetime` DESC 
 		LIMIT 1);
 END$$
-DELIMITER ;
 
+DROP FUNCTION IF EXISTS f_lastestPostURL;
 DELIMITER $$
 CREATE FUNCTION f_lastestPostURL( /* Функция поиска последней url-ссылки для поста */
 	_uuid_post NVARCHAR(36)) /* Параметр uuid поста */
@@ -244,8 +245,8 @@ BEGIN
 		ORDER BY `datetime` DESC 
 		LIMIT 1);
 END$$
-DELIMITER ;
 
+DROP FUNCTION IF EXISTS f_URLToPostUUID;
 DELIMITER $$
 CREATE FUNCTION f_URLToPostUUID( /* Функция поиска последней url-ссылки для поста */
 	_url NVARCHAR(256)) /* Параметр uuid поста */
@@ -257,8 +258,8 @@ BEGIN
 		WHERE `link`.`url` LIKE _url 
 		LIMIT 1);
 END$$
-DELIMITER ;
 
+DROP FUNCTION IF EXISTS f_distance_between_addresses;
 DELIMITER $$
 CREATE FUNCTION f_distance_between_addresses( /* Функция определения расстояния между двумя адресами */
 	_uuid_address_from NVARCHAR(36), /* Параметр uuid начального адреса */
@@ -296,4 +297,3 @@ BEGIN
 	/* Возврат расстояния */
 	RETURN ACOS(SIN(_w_from)*SIN(_w_to) + COS(_w_from)*COS(_w_to)*COS(_w_to - _v_to));
 END$$
-DELIMITER ;

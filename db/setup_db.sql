@@ -1,16 +1,18 @@
 /* Файл генерации структуры БД */
 
+DROP SCHEMA IF EXISTS `test`;
 CREATE SCHEMA `test`; # Создание БД
 USE `test`; # Указание субд работать с определенной БД
 
 # Создание таблиц
-
+DROP TABLE IF EXISTS `country`;
 CREATE TABLE `country` ( /* таблица стран */
 	`id` INT AUTO_INCREMENT NOT NULL UNIQUE, /* Порядковый номер записи в таблице */
 	`uuid` NVARCHAR(36) NOT NULL UNIQUE, /* Уникальный идентификатор */
 	`title` NVARCHAR(144) NULL UNIQUE, /* Название */
 	PRIMARY KEY (`uuid`)); /* Указание на поле первичного ключа */
 
+DROP TABLE IF EXISTS `city`;
 CREATE TABLE `city` ( /* таблица городов */
 	`id` INT AUTO_INCREMENT NOT NULL UNIQUE, /* Порядковый номер записи в таблице */
 	`uuid` NVARCHAR(36) NOT NULL UNIQUE, /* Уникальный идентификатор */
@@ -18,6 +20,7 @@ CREATE TABLE `city` ( /* таблица городов */
 	`title` NVARCHAR(144) NULL UNIQUE, /* Название */
 	PRIMARY KEY (`uuid`)); /* Указание на поле первичного ключа */
 
+DROP TABLE IF EXISTS `address`;
 CREATE TABLE `address` ( /* таблица адреcов */
 	`id` INT AUTO_INCREMENT NOT NULL UNIQUE, /* Порядковый номер записи в таблице */
 	`uuid` NVARCHAR(36) NOT NULL UNIQUE, /* Уникальный идентификатор */
@@ -26,6 +29,8 @@ CREATE TABLE `address` ( /* таблица адреcов */
 	`latitude` FLOAT NULL DEFAULT 0, /* Широта */
 	`longitude` FLOAT NULL DEFAULT 0, /* Долгота */
 	PRIMARY KEY (`uuid`)); /* Указание на поле первичного ключа */
+
+DROP TABLE IF EXISTS `post`;
 CREATE TABLE `post` ( /* таблица объявлений */
 	`id` INT AUTO_INCREMENT NOT NULL UNIQUE, /* Порядковый номер записи в таблице */
 	`uuid` NVARCHAR(36) NOT NULL UNIQUE, /* Уникальный идентификатор */
@@ -38,12 +43,14 @@ CREATE TABLE `post` ( /* таблица объявлений */
 		2-ожидает добавление адреса */
 	PRIMARY KEY (`uuid`)); /* Указание на поле первичного ключа */
 
+DROP TABLE IF EXISTS `community`;
 CREATE TABLE `community` ( /* таблица cообщеcтв */
 	`id` INT AUTO_INCREMENT NOT NULL UNIQUE, /* Порядковый номер записи в таблице */
 	`uuid` NVARCHAR(36) NOT NULL UNIQUE, /* Уникальный идентификатор */
 	`url` NVARCHAR(256) NULL, /* URL-адрес сообщества */
 	PRIMARY KEY (`uuid`)); /* Указание на поле первичного ключа */
 
+DROP TABLE IF EXISTS `link`;
 CREATE TABLE `link` ( /* таблица ccылок на поcт */
 	`id` INT AUTO_INCREMENT NOT NULL UNIQUE, /* Порядковый номер записи в таблице */
 	`uuid` NVARCHAR(36) NOT NULL UNIQUE, /* Уникальный идентификатор */
@@ -53,12 +60,14 @@ CREATE TABLE `link` ( /* таблица ccылок на поcт */
 	`datetime` DATETIME NULL, /* Дата добавления объявление по этой ссылке */
 	PRIMARY KEY (`uuid`)); /* Указание на поле первичного ключа */
 
+DROP TABLE IF EXISTS `telephone`;
 CREATE TABLE `telephone` ( /* таблица телефонов */
 	`id` INT AUTO_INCREMENT NOT NULL UNIQUE, /* Порядковый номер записи в таблице */
 	`uuid` NVARCHAR(36) NOT NULL UNIQUE, /* Уникальный идентификатор */
 	`number` NVARCHAR(16) NULL UNIQUE, /* Номер телефона */
 	PRIMARY KEY (`uuid`)); /* Указание на поле первичного ключа */
 
+DROP TABLE IF EXISTS `telephone__post`;
 CREATE TABLE `telephone__post` ( /* таблица cвязи телефонов и объявлений */
 	`id` INT AUTO_INCREMENT NOT NULL UNIQUE, /* Порядковый номер записи в таблице */
 	`uuid_telephone` NVARCHAR(36) NOT NULL, /* Ссылка на запись в таблице телефонов */
