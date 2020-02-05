@@ -472,7 +472,6 @@ def WallItemSearch(country='Россия', city='Красноярск', id_group
 		wall_item = WallItemPars(str(wall_item))
 		# Проверка определения цены 
 		# В сучае, когда цена не определена дальнейшая обработка прекращается
-		if wall_item['price'] < 6000.0: continue
 		wall_item['link_community'] = g_
 		# Добавление обработанного поста в список
 		_list.append(wall_item)
