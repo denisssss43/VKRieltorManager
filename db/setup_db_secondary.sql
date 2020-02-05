@@ -199,7 +199,7 @@ BEGIN
 	
 	UPDATE `post`
 	SET `uuid_address` = _uuid_address,
-		`status` = _status,
+		`status` = _status
 	WHERE `uuid` = _uuid_post;
 END$$
 DELIMITER ;
