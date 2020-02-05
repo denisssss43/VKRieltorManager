@@ -79,7 +79,7 @@ BEGIN
 			_uuid_post);
 	end if;
 
-	SELECT _uuid_post /* Возврат uuid поста */
+	SELECT _uuid_post; /* Возврат uuid поста */
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addTelephone;
