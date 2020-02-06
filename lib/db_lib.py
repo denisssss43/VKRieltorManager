@@ -5,11 +5,11 @@ import pymysql
 from contextlib import closing
 from pymysql.cursors import DictCursor
 import ast 
-import copy 
+import copy
 
 connection = None # Объект подключения к бд
 # NOTE:Изменено и откомментировано полностью
-def Connect(host='localhost', user='root', password='MnM32RtQt', db='test'):
+def Connect(host='', user='', password='', db=''):
 	"""Подключение к БД"""
 	global connection
 	connection = pymysql.connect(host=host, user=user, password=password, db=db, charset='utf8', cursorclass=DictCursor)
@@ -64,7 +64,7 @@ def AddPost(communityURL='', description='', dateTime=datetime.now(), price=0.0,
 		str(url),
 		str(dateTime),
 		str(price))
-		
+
 	if connection != None: # Если подключение создано
 		with connection.cursor() as cursor:
 			cursor.execute("call test.sp_addPost('"+str(communityURL)+"','"+str(description)[:1024]+"','"+str(dateTime)+"',"+str(price)+",'"+str(url)+"');")
