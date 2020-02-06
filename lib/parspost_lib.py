@@ -428,28 +428,43 @@ def WallItemPars(wall_item=''):
 
 	# Описание нормализовано и записано
 	description = DescriptionPars(wall_item) 
-
 	# Получение телефонных номеров
 	telephones = TelephonePars(description)
-
 	# Получение хэштэгов
 	hashtags = HashtagPars(description)
-
 	# Отчистка описания 
 	description = DescriptionClean(description)
+	# Цена предложения	
+	price = PricePars(description)
 
-	return {'date': DatePars(wall_item), 		# Получение даты публикации
-			'link_community': '',				# Ссылка на сообщество
-			'link': LinkPars(wall_item),		# Получение ссылки на запись во вкантакте
-			'description': description,			# Описание 
-			'price': PricePars(description),	# Цена предложения
-			'address': {						# Адрес
+	if price <= 0: # Если цена определилась как нулевая
+		return {
+			'date': None, 				# Получение даты публикации
+			'link_community': '',		# Ссылка на сообщество
+			'link': '',					# Получение ссылки на запись во вкантакте
+			'description': '',			# Описание 
+			'price': 0.0,				# Цена предложения
+			'address': {				# Адрес
 				'address': 'NULL', 
 				'latitude': 0.0, 
 				'longitude': 0.0}, 
-			'telephones': telephones,			# Получение телефонных номеров
-			'img_urls': ImgPars(wall_item),		# Получение ссылок на изображение
-			'hashtags': hashtags}				# Получение телефонных номеров
+			'telephones': list(),		# Получение телефонных номеров
+			'img_urls': list(),			# Получение ссылок на изображение
+			'hashtags': list()}			# Получение телефонных номеров
+
+	return {
+		'date': DatePars(wall_item), 		# Получение даты публикации
+		'link_community': '',				# Ссылка на сообщество
+		'link': LinkPars(wall_item),		# Получение ссылки на запись во вкантакте
+		'description': description,			# Описание 
+		'price': PricePars(description),	# Цена предложения
+		'address': {						# Адрес
+			'address': 'NULL', 
+			'latitude': 0.0, 
+			'longitude': 0.0}, 
+		'telephones': telephones,			# Получение телефонных номеров
+		'img_urls': ImgPars(wall_item),		# Получение ссылок на изображение
+		'hashtags': hashtags}				# Получение телефонных номеров
 
 # NOTE:Изменено и откомментировано полностью
 def WallItemSearch(country='', city='', id_group='', url_group='', offset=0):
