@@ -211,6 +211,16 @@ def DescriptionClean(description):
 
 	return description
 # NOTE:Изменено и откомментировано полностью
+def ImgPars(wall_item):
+	"""Получение изображений из поста во вконтакте"""
+	# thumb_map_img thumb_map_img_as_div
+	result = list()
+
+	for div_img in BeautifulSoup(wall_item, 'html.parser').find_all('div', class_='thumb_map_img thumb_map_img_as_div'):
+		result.append(requests.get(div_img.get('data-src_big').split('|')[0]).content)
+
+	return result
+# NOTE:Изменено и откомментировано полностью
 def TelephonePars(description):
 	"""Получение телефонных номеров из описания поста"""
 	
@@ -438,6 +448,7 @@ def WallItemPars(wall_item=''):
 				'latitude': 0.0, 
 				'longitude': 0.0}, 
 			'telephones': telephones,			# Получение телефонных номеров
+			'img_urls': ImgPars(wall_item),		# Получение ссылок на изображение
 			'hashtags': hashtags}				# Получение телефонных номеров
 
 # NOTE:Изменено и откомментировано полностью
