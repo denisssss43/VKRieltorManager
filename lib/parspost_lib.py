@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup
 import re 
 from datetime import datetime, timedelta
 import datetime
-from db_lib import AddPost, AddAddress, CloseConnect, Connect
 
 # NOTE:Изменено и откомментировано полностью
 def AddressYandex(string, country='Россия', city='Красноярск'):
@@ -480,51 +479,5 @@ def WallItemSearch(country='Россия', city='Красноярск', id_group
 	return _list
 
 if __name__ == "__main__":
-	Connect()
-
-	for i in range(0,2000):
-		print('\n i',i)
-		
-		country = 'Россия'
-		city='Красноярск'
-		id_group='public9751268'
-		url_group='https://m.vk.com/public9751268'
-		
-		for wall_item in WallItemSearch(
-			country=country, 
-			city=city, 
-			id_group=id_group,
-			url_group=url_group,
-			offset=i*5):
-			
-			post = AddPost(
-				wall_item['link_community'],
-				wall_item['description'],
-				wall_item['date'],
-				wall_item['price'],
-				wall_item['link'],
-				wall_item['telephones'])
-			
-			print ('\n i',i)
-			print ('date',wall_item['date'])
-			print ('link',wall_item['link'])
-			print (post)
-
-			if post['status'] == 2:
-				address = AddressFromDescription(
-					description=wall_item['description'], 
-					country=country, 
-					city=city)
-
-				print (address)
-
-				AddAddress(
-					uuid_post=post['uuid'], 
-					countryTitle=country, 
-					cityTitle=city, 
-					addressTitle=address['address'], 
-					latitude=address['latitude'], 
-					longitude=address['longitude'])
-
-			print('===================================================')
-	CloseConnect()
+	
+	pass
