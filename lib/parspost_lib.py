@@ -439,9 +439,9 @@ def WallItemPars(wall_item=''):
 
 	if price <= 0: # Если цена определилась как нулевая
 		return {
-			'date': None, 				# Получение даты публикации
+			'date': DatePars(wall_item), 				# Получение даты публикации
 			'link_community': '',		# Ссылка на сообщество
-			'link': '',					# Получение ссылки на запись во вкантакте
+			'link': LinkPars(wall_item),					# Получение ссылки на запись во вкантакте
 			'description': '',			# Описание 
 			'price': 0.0,				# Цена предложения
 			'address': {				# Адрес
