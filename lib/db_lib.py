@@ -60,6 +60,9 @@ def AddCommunity(countryTitle='', cityTitle='', communityURL=''):
 def AddPost(communityURL='', description='', dateTime=datetime.now(), price=0.0, url='', telephones=[]):
 	"""Добавление поста в БД"""
 	result = None
+	
+	if price <= 0: return result
+	
 	print(
 		str(url),
 		str(dateTime),
