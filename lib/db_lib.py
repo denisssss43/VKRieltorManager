@@ -21,29 +21,56 @@ def CloseConnect():
 		connection.close()
 		connection = None
 
-def GetGroups():
-	"""Получение списка групп, по которым необходимо собирать информацию"""
-	result = list()
-	
-	result.append({'country':'Россия', 'city':'Красноярск', 'id_group':'public9751268', 'url_group':'public9751268'})
-	result.append({'country':'Россия', 'city':'Красноярск', 'id_group':'public123114913', 'url_group':'public9751268'})
-	result.append({'country':'Россия', 'city':'Красноярск', 'id_group':'public105543780', 'url_group':'public9751268'})
-	result.append({'country':'Россия', 'city':'Красноярск', 'id_group':'public76867861', 'url_group':'public9751268'})
-	result.append({'country':'Россия', 'city':'Красноярск', 'id_group':'public80318218', 'url_group':'public9751268'})
-	
-	pass
+def GetCountry(uuid=''):
+	"""Получение страны по uuid"""
+	result = None
+	if connection != None: # Если подключение создано
+		with connection.cursor() as cursor:
+			cursor.execute("SELECT * FROM test.country WHERE uuid='"+str(uuid)+"';")
+			result = cursor.fetchone()
+	return result
 
+def GetCity(uuid=''):
+	"""Получение города по uuid"""
+	result = None
+	if connection != None: # Если подключение создано
+		with connection.cursor() as cursor:
+			cursor.execute("SELECT * FROM test.city WHERE uuid='"+str(uuid)+"';")
+			result = cursor.fetchone()
+	return result
+
+def GetCommunity():
+	"""Получение списка групп, по которым необходимо собирать информацию"""
+	result = None
+	if connection != None: # Если подключение создано
+		with connection.cursor() as cursor:
+			cursor.execute("SELECT * FROM test.community;")
+			result = cursor.fetchall()
+	return result
+
+def AddCommunity(countryTitle='', cityTitle='', communityURL=''):
+	"""Добавление сообщества в БД"""
+
+	if connection != None: # Если подключение создано
+		with connection.cursor() as cursor:
+			cursor.execute("call test.sp_addCommunity('"+str(countryTitle)+"', '"+str(cityTitle)+"', '"+str(communityURL)+"');")
+			connection.commit()
+	pass
 
 def AddPost(communityURL='', description='', dateTime=datetime.now(), price=0.0, url='', telephones=[]):
 	"""Добавление поста в БД"""
 	result = None
+	print(
+		str(url),
+		str(dateTime),
+		str(price))
+		
 	if connection != None: # Если подключение создано
 		with connection.cursor() as cursor:
 			cursor.execute("call test.sp_addPost('"+str(communityURL)+"','"+str(description)[:1024]+"','"+str(dateTime)+"',"+str(price)+",'"+str(url)+"');")
 			result = cursor.fetchone()
 			for num in telephones:
 				AddTelephone(result['uuid'], str(num))
-				print(result['uuid'], str(num))
 			connection.commit()
 
 	return result
@@ -62,7 +89,6 @@ def AddAddress(uuid_post='', countryTitle='', cityTitle='', addressTitle='', lat
 
 	if connection != None: # Если подключение создано
 		addressTitle = str(addressTitle) if addressTitle=='NULL' else ("'"+str(addressTitle)+"'")
-		print(addressTitle)
 		with connection.cursor() as cursor:
 			cursor.execute("call test.sp_addAddress('"+str(uuid_post)+"', '"+str(countryTitle)+"', '"+str(cityTitle)+"', " + addressTitle + ", "+str(latitude)+", "+str(longitude)+");")
 			connection.commit()
