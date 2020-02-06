@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import datetime
 
 # NOTE:Изменено и откомментировано полностью
-def AddressYandex(string, country='Россия', city='Красноярск'):
+def AddressYandex(string, country='', city=''):
 	'''Нормализация адресса строки и определение его параметров'''
 
 	# Параметр текста в яндекс картах
@@ -48,7 +48,7 @@ def AddressYandex(string, country='Россия', city='Красноярск'):
 		'latitude': 0.0,	# широта (перпендикулярна экватору)
 		'longitude': 0.0}	# Долгота (по экватору) 
 # NOTE:Изменено и откомментировано полностью
-def AddressFromDescription(description, country='Россия', city='Красноярск'):
+def AddressFromDescription(description, country='', city=''):
 	"""Поиск адреса в описании"""
 
 	# Удаление лишних символов
@@ -441,7 +441,7 @@ def WallItemPars(wall_item=''):
 			'hashtags': hashtags}				# Получение телефонных номеров
 
 # NOTE:Изменено и откомментировано полностью
-def WallItemSearch(country='Россия', city='Красноярск', id_group='public9751268', url_group='https://m.vk.com/public9751268', offset=0):
+def WallItemSearch(country='', city='', id_group='', url_group='', offset=0):
 	"""Поиск сырых постов в указанной группе
 	(Без адреса)"""
 
@@ -479,5 +479,5 @@ def WallItemSearch(country='Россия', city='Красноярск', id_group
 	return _list
 
 if __name__ == "__main__":
-	
+
 	pass
