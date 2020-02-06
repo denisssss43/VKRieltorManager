@@ -2,10 +2,11 @@
 
 from lib.db_lib import AddPost, AddAddress, GetCommunity, GetCity, GetCountry, AddCommunity, CloseConnect, Connect
 from lib.parspost_lib import WallItemSearch, AddressFromDescription
+from lib.cfg_lib import GetParamm
 
 
 if __name__ == "__main__":
-	Connect()
+	Connect(host=GetParamm('host'), user=GetParamm('user'), password=GetParamm('password'), db=GetParamm('db'))
 	
 	AddCommunity(countryTitle='Россия', cityTitle='Красноярск', communityURL='https://m.vk.com/public9751268')
 	AddCommunity(countryTitle='Россия', cityTitle='Красноярск', communityURL='https://m.vk.com/public123114913')
