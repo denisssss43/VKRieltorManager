@@ -1,8 +1,9 @@
 /* Файл вторичной настройки БД и ее структуры */
 
-USE test; # Указание субд работать с определенной БД
-
 # Создание хранимых процедур
+
+# Указание субд работать со схемой библиотеки постов
+USE `post_library`; 
 
 DELIMITER $$
 DROP PROCEDURE IF EXISTS sp_addPost;
@@ -211,6 +212,48 @@ BEGIN
 END$$
 
 DELIMITER $$
+DROP PROCEDURE IF EXISTS sp_addImg;
+CREATE PROCEDURE sp_addImg( /* Процедура добавления изображений */
+	_uuid_post nvarchar(36), /* uuid поста к которому будет прикреплен номер телефона */
+	_img_url nvarchar(256)) /* URL-ссылка на изображение */
+BEGIN
+	DECLARE _uuid_img nvarchar(36); /* Переменная для хранения uuid телефона */
+	DECLARE _is_img__post TINYINT(1); /* Существует ли связь для текущего телефона и поста */
+
+	SET _uuid_img = ( /* Получение uuid записи URL-ссылки на изображение */
+		SELECT `img`.`uuid` 
+		FROM `img` 
+		WHERE `img`.`url` LIKE _img_url
+		LIMIT 1);
+	
+	IF _uuid_img IS NULL THEN	/* Если URL-ссылка на изображение не была добавлена */
+		SET _uuid_img = UUID(); /* Генерация uuid для записи URL-ссылки на изображение */
+		INSERT INTO `img` ( /* Добавление записи URL-ссылки на изображение */
+			`uuid`, 
+			`url`) 
+		VALUES (
+			_uuid_img, 
+			_img_url);
+	END IF;	
+	
+	SET _is_img__post = ( /* Проверка наличия свизи добавляемой изображения и объявления */
+		SELECT COUNT(*) 
+		FROM `img__post` 
+		WHERE `img__post`.`uuid_img` LIKE _uuid_img
+		AND `img__post`.`uuid_post` LIKE _uuid_post
+		LIMIT 1);
+
+	IF _is_img__post = 0 THEN /* Если связь отсутствует */
+		INSERT INTO `img__post` ( /* Добавление связи изображений с постом */
+			`uuid_img`, 
+			`uuid_post`)
+        VALUES (
+			_uuid_img, 
+			_uuid_post);
+	END IF;	
+END$$
+
+DELIMITER $$
 DROP PROCEDURE IF EXISTS sp_addCommunity;
 CREATE PROCEDURE sp_addCommunity( /* Процедура добавления группы */
 	_countryTitle nvarchar(144), /* Наименование страны */
@@ -279,6 +322,10 @@ END$$
 
 
 # Создание функций
+
+# Указание субд работать со схемой библиотеки постов
+USE `post_library`; 
+
 DELIMITER $$
 DROP FUNCTION IF EXISTS f_address_uuidToText;
 CREATE FUNCTION f_address_uuidToText( /* Функция конвертации uuid адреса в текстовое представление */
