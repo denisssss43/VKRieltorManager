@@ -62,11 +62,6 @@ def AddPost(communityURL='', description='', dateTime=datetime.now(), price=0.0,
 	result = None
 	
 	if price <= 0: return result
-	
-	print(
-		str(url),
-		str(dateTime),
-		str(price))
 
 	if connection != None: # Если подключение создано
 		with connection.cursor() as cursor:
@@ -97,3 +92,10 @@ def AddAddress(uuid_post='', countryTitle='', cityTitle='', addressTitle='', lat
 			connection.commit()
 	
 	pass
+
+def AddImg(uuid_post='', _img_url=''):
+	"""Добавление изображения в БД"""
+	if connection != None: # Если подключение создано
+		with connection.cursor() as cursor:
+			cursor.execute("call test.sp_addImg('"+str(uuid_post)+"', '"+str(_img_url)+"');")
+			connection.commit()
