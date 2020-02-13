@@ -314,6 +314,7 @@ def SearchFromGroup(g_id='', g_title='', offset=0, country='Россия', city=
 				print (row['link'], row['address'])
 		connection.commit()
 	except: pass
+
 def SearchFromGroupWithoutAddress(g_id='', g_title='', offset=0, country='Россия', city='Красноярск'):
 	global connection
 	if (g_id == '' and g_title == ''): return 0
