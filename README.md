@@ -10,7 +10,7 @@ docker pull mysql/mysql-server:5.7
 
 ### Развертка образа:
 ```bash
-docker run -p 3306:3306 --name=mysqlvkrieltor -e MYSQL_ROOT_PASSWORD=MnM32RtQt -d mysql:5.7
+docker run -p 3306:3306 --name=mysqlvkrieltor -e MYSQL_ROOT_PASSWORD=... -d mysql:5.7
 ```
 
 ```3306:3306``` - первая цифра - внешний порт, вторая - внутренний;
@@ -33,7 +33,7 @@ docker inspect mysqlvkrieltor
 "Config": {
 	...,
 	"Env": [
-		"MYSQL_ROOT_PASSWORD=MnM32RtQt",
+		"MYSQL_ROOT_PASSWORD=...",
 		...
 	],
 	...
@@ -57,4 +57,4 @@ docker inspect mysqlvkrieltor
 
 ```user: root``` - стандартное значение; 
 
-```password: MnM32RtQt``` - берем из значения "MYSQL_ROOT_PASSWORD".
+```password: ...``` - берем из значения "MYSQL_ROOT_PASSWORD".
