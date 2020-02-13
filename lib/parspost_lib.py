@@ -217,7 +217,7 @@ def ImgPars(wall_item):
 	result = list()
 
 	for div_img in BeautifulSoup(wall_item, 'html.parser').find_all('div', class_='thumb_map_img thumb_map_img_as_div'):
-		result.append(requests.get(div_img.get('data-src_big').split('|')[0]).content)
+		result.append(div_img.get('data-src_big').split('|')[0])
 
 	return result
 # NOTE:Изменено и откомментировано полностью
