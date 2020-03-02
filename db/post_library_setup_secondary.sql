@@ -6,7 +6,7 @@
 USE `post_library`; 
 
 DELIMITER $$
-DROP PROCEDURE IF EXISTS sp_addPost;
+# DROP PROCEDURE IF EXISTS sp_addPost;
 CREATE PROCEDURE sp_addPost( /* Процедура добавления сырого (Без адреса) поста в БД */
 	_communityURL NVARCHAR(256), /* Ноименование сообщество в котором был найден пост */
 	_description NVARCHAR(1024), /* Полное описание, указанное в посте (от редактированное) */
@@ -86,7 +86,7 @@ BEGIN
 END$$
 
 DELIMITER $$
-DROP PROCEDURE IF EXISTS sp_addTelephone;
+# DROP PROCEDURE IF EXISTS sp_addTelephone;
 CREATE PROCEDURE sp_addTelephone( /* Процедура добавления телефонного номера */
 	_uuid_post nvarchar(36), /* uuid поста к которому будет прикреплен номер телефона */
 	_telephone nvarchar(16)) /* номер телефона */
@@ -127,7 +127,7 @@ BEGIN
 END$$
 
 DELIMITER $$
-DROP PROCEDURE IF EXISTS sp_addAddress;
+# DROP PROCEDURE IF EXISTS sp_addAddress;
 CREATE PROCEDURE sp_addAddress( /* Процедура добавления адреса */
 	_uuid_post nvarchar(36), /* uuid поста к которому будет прикреплен адрес */
 	_countryTitle nvarchar(144), /* Наименование страны в которой актуален этот пост */
@@ -212,7 +212,7 @@ BEGIN
 END$$
 
 DELIMITER $$
-DROP PROCEDURE IF EXISTS sp_addImg;
+# DROP PROCEDURE IF EXISTS sp_addImg;
 CREATE PROCEDURE sp_addImg( /* Процедура добавления изображений */
 	_uuid_post nvarchar(36), /* uuid поста к которому будет прикреплен номер телефона */
 	_img_url nvarchar(256)) /* URL-ссылка на изображение */
@@ -254,7 +254,7 @@ BEGIN
 END$$
 
 DELIMITER $$
-DROP PROCEDURE IF EXISTS sp_addCommunity;
+# DROP PROCEDURE IF EXISTS sp_addCommunity;
 CREATE PROCEDURE sp_addCommunity( /* Процедура добавления группы */
 	_countryTitle nvarchar(144), /* Наименование страны */
 	_cityTitle nvarchar(144), /* Наименование города */
@@ -327,7 +327,7 @@ END$$
 USE `post_library`; 
 
 DELIMITER $$
-DROP FUNCTION IF EXISTS f_address_uuidToText;
+# DROP FUNCTION IF EXISTS f_address_uuidToText;
 CREATE FUNCTION f_address_uuidToText( /* Функция конвертации uuid адреса в текстовое представление */
 	_uuid_address NVARCHAR(36)) /* Параметр uuid адреса */
 	RETURNS NVARCHAR(128) /* Тип возвращаемых данных */
@@ -340,7 +340,7 @@ BEGIN
 END$$
 
 DELIMITER $$
-DROP FUNCTION IF EXISTS f_lastestPostDateTime;
+# DROP FUNCTION IF EXISTS f_lastestPostDateTime;
 CREATE FUNCTION f_lastestPostDateTime( /* Функция поиска последней даты для поста */
 	_uuid_post NVARCHAR(36)) /* Параметр uuid поста */
 	RETURNS datetime /* Тип возвращаемых данных */
@@ -354,7 +354,7 @@ BEGIN
 END$$
 
 DELIMITER $$
-DROP FUNCTION IF EXISTS f_lastestPostURL;
+# DROP FUNCTION IF EXISTS f_lastestPostURL;
 CREATE FUNCTION f_lastestPostURL( /* Функция поиска последней url-ссылки для поста */
 	_uuid_post NVARCHAR(36)) /* Параметр uuid поста */
 	RETURNS NVARCHAR(256) /* Тип возвращаемых данных */
@@ -368,7 +368,7 @@ BEGIN
 END$$
 
 DELIMITER $$
-DROP FUNCTION IF EXISTS f_URLToPostUUID;
+# DROP FUNCTION IF EXISTS f_URLToPostUUID;
 CREATE FUNCTION f_URLToPostUUID( /* Функция поиска последней url-ссылки для поста */
 	_url NVARCHAR(256)) /* Параметр uuid поста */
 	RETURNS NVARCHAR(36) /* Тип возвращаемых данных */
@@ -381,7 +381,7 @@ BEGIN
 END$$
 
 DELIMITER $$
-DROP FUNCTION IF EXISTS f_distance_between_addresses;
+# DROP FUNCTION IF EXISTS f_distance_between_addresses;
 CREATE FUNCTION f_distance_between_addresses( /* Функция определения расстояния между двумя адресами */
 	_uuid_address_from NVARCHAR(36), /* Параметр uuid начального адреса */
 	_uuid_address_to NVARCHAR(36)) /* Параметр uuid конечного адреса */
