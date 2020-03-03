@@ -62,7 +62,7 @@ def AddCommunity(countryTitle='', cityTitle='', communityURL=''):
 
 def AddPost(communityURL='', description='', dateTime=datetime.now(), price=0.0, url='', telephones=[]):
 	"""Добавление поста в БД (post_library)"""
-	result = None
+	result = {'uuid':'', 'status':0}
 	
 	if price <= 0: return result
 
@@ -98,7 +98,7 @@ def AddAddress(uuid_post='', countryTitle='', cityTitle='', addressTitle='', lat
 
 def AddImg(uuid_post='', _img_url=''):
 	"""Добавление изображения в БД (post_library)"""
-	print ("uuid post:{0} img url:{}".format(uuid_post,_img_url))
+	print ("uuid post:{0} img url:{1}".format(uuid_post,_img_url))
 	if connection != None: # Если подключение создано
 		with connection.cursor() as cursor:
 			cursor.execute("call post_library.sp_addImg('"+str(uuid_post)+"', '"+str(_img_url)+"');")

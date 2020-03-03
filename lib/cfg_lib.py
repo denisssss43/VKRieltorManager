@@ -67,7 +67,7 @@ def SetParam(**kwargs):
 if __name__ == "__main__":
 	
 	SetParam(
-		post_library_host=('localhost','значение хост библиотеки постов'), 
+		post_library_host=('192.168.43.200','значение хост библиотеки постов'), 
 		post_library_user=('usr_post_lib', 'имя пользователя с которого будет осуществлятся взаимодействие с библиотекой постов'), 
 		post_library_password=('...', 'пароль пользователя с которого будет осуществляться взаимодействие с библиотекой постов'), 
 		post_library_db=('post_library', 'наименование библиотеки постов'),
@@ -81,12 +81,12 @@ if __name__ == "__main__":
 
 
 	Connect()
-	result = cursor.execute("SELECT * FROM paramm;").fetchall()
+	result = cursor.execute("SELECT * FROM param;").fetchall()
 	Close()
 
 	f = open('lib/cfg.py','w', encoding='utf-8')
 	f.write('"""Либа представлений параметров конфигурационного файла"""\n\n\n')
-	f.write('from cfg_lib import GetParam\n\n\n')
+	f.write('from lib.cfg_lib import GetParam\n\n\n')
 	
 	for param in result:
 		f.write('def {0}():\n    """представление параметра {0}{1}"""\n    return GetParam("{0}")\n\n'.format(param[1]," - "+param[3] if param[3] != "" else ""))

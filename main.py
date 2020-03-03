@@ -7,10 +7,7 @@ from lib.cfg import *
 if __name__ == "__main__":
 
 	Connect(
-		host=post_library_host, 
-		user=post_library_user, 
-		password=, 
-		db=GetParam('post_library_db'))
+		host=post_library_host(), 
 
 	
 	AddCommunity(
