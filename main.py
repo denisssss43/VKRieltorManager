@@ -8,6 +8,9 @@ if __name__ == "__main__":
 
 	Connect(
 		host=post_library_host(), 
+		user=post_library_user(), 
+		password=post_library_password(), 
+		db=post_library_db())
 
 	
 	AddCommunity(
