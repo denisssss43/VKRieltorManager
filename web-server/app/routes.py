@@ -1,10 +1,6 @@
-
-
-# from flask import Flask, request, render_template
-
-# app = Flask(__name__)
-
 from app import app, request, render_template
+from parser.lib.db_post import CloseConnect, Connect
+from parser.lib.cfg.cfg import *
 
 @app.route('/')
 def index():
@@ -22,6 +18,13 @@ def home():
 
 @app.route('/stat/<country>/<city>')
 def stat(country = None, city = None):
+	Connect(
+		host=post_library_host(), 
+		user=post_library_user(), 
+		password=post_library_password(), 
+		db=post_library_db())
+	CloseConnect()
+
 	return render_template(
 		'stat.html',
 		title='Stat', 
