@@ -4,12 +4,11 @@
 
 # app = Flask(__name__)
 
-# from app import routes
+from app import app, request, render_template
 
 @app.route('/')
 def index():
 	return '...'
-
 
 @app.route('/search')
 def home():
@@ -23,9 +22,6 @@ def home():
 
 @app.route('/stat/<country>/<city>')
 def stat(country = None, city = None):
-
-	result = 'Страна {0} Город {1}'.format(country, city)
-
 	return render_template(
 		'stat.html',
 		title='Stat', 
