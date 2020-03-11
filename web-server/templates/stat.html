@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+		{% if title %}
+		<title>{{ title }} - VK Rieltor</title>
+		{% else %}
+		<title>VK Rieltor</title>
+		{% endif %}
+	</head>
+	<body>
+		<h1>Страна {{ country }}</h1>
+		<h1>Город {{ city }}</h1>
+	</body>
+</html>
