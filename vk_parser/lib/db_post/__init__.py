@@ -5,17 +5,18 @@ from contextlib import closing
 from pymysql.cursors import DictCursor
 import ast 
 import copy
-# from cfg.cfg import *
 
 connection = None # Объект подключения к бд 
 
 # NOTE:Изменено и откомментировано полностью
 def Connect(host='', user='', password='', db=''):
 	"""Подключение к БД"""
+	global connection
 	connection = pymysql.connect(host=host, user=user, password=password, db=db, charset='utf8', cursorclass=DictCursor)
 # NOTE:Изменено и откомментировано полностью
 def CloseConnect():
 	"""Закрытие подключения к БД"""
+	global connection
 	if connection != None: 
 		connection.close()
 		connection = None
@@ -44,7 +45,15 @@ def GetCommunity():
 	result = None
 	if connection != None: # Если подключение создано
 		with connection.cursor() as cursor:
-			cursor.execute("SELECT * FROM post_library.community;")
+			cursor.execute("""
+				SELECT 
+					`id`, 
+					`uuid`, 
+					`uuid_city`, 
+					(SELECT `title` FROM post_library.city LIMIT 1) as city, 
+					`url` 
+				FROM post_library.community;
+				""")
 			result = cursor.fetchall()
 	return result
 
@@ -101,6 +110,110 @@ def AddImg(uuid_post='', _img_url=''):
 			cursor.execute("call post_library.sp_addImg('"+str(uuid_post)+"', '"+str(_img_url)+"');")
 			connection.commit()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# addreses = list()
+# def Addreses():
+# 	global addreses
+# 	addreses = list()
+# 	if connection != None: # Если подключение создано
+# 		with connection.cursor() as cursor:
+# 			cursor.execute("""
+# 				SELECT 
+# 					`address`.`id`,
+# 					`address`.`uuid`,
+# 					`address`.`uuid_city`,
+# 					`address`.`title`,
+# 					`address`.`latitude`,
+# 					`address`.`longitude`
+# 				FROM `post_library`.`address`;
+# 				""")
+# 			for i in cursor.fetchall():
+# 				# print(i)
+# 				addreses.append(
+# 					Address(
+# 						id=i['id'], 
+# 						uuid=i['uuid'], 
+# 						uuid_city=i['uuid_city'], 
+# 						title=i['title'], 
+# 						latitude=i['latitude'], 
+# 						longitude=i['longitude']))
+# 	return addreses
+# class Address(object):
+# 	def __init__(self, id=None, uuid=None, uuid_city=None, title=None, latitude=None, longitude=None):
+# 		self.id = id
+# 		self.uuid = uuid
+# 		self.uuid_city = uuid_city
+# 		self.title = title
+# 		self.latitude = latitude
+# 		self.longitude = longitude
+# 	pass
+# 	def get_city(self):
+# 		if connection != None: # Если подключение создано
+# 			with connection.cursor() as cursor:
+# 				cursor.execute("""
+# 					SELECT 
+# 						`city`.`id`,
+#     					`city`.`uuid`,
+#     					`city`.`uuid_country`,
+#     					`city`.`title`
+# 					FROM `post_library`.`city`
+# 					WHERE `city`.`uuid` LIKE {0};
+# 					""".format(self.uuid_city))
+				
+# 				return cursor.fetchall()
+# 		return None
+# 	def set_city(self, value):
+# 		if connection != None: # Если подключение создано
+# 			with connection.cursor() as cursor:
+# 				cursor.execute("""
+# 					SELECT 
+# 						`city`.`id`,
+#     					`city`.`uuid`,
+#     					`city`.`uuid_country`,
+#     					`city`.`title`
+# 					FROM `post_library`.`city`;
+# 					""")
+# 	city = property(get_city, set_city)
+# if __name__=="__main__":
+# 	Connect(
+# 		host='172.16.17.67', 
+# 		user='usr_post_lib', 
+# 		password='MnM32RtQt', 
+# 		db='post_library')
+# 	# print(Addreses)
+# 	Addreses()
+# 	for i in addreses:
+# 		print(i.city)
+
+	CloseConnect()
 
 # if __name__=="__main__":
 # 	Connect(
