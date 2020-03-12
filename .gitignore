@@ -5,3 +5,5 @@ vk_parser/lib/cfg/__pycache__/__init__.cpython-38.pyc
 vk_parser/lib/cfg/__pycache__/cfg.cpython-38.pyc
 vk_parser/lib/cfg/cfg.db
 web-server/cfg.db
+vk_parser/lib/__pycache__/db_lib.cpython-38.pyc
+vk_parser/lib/__pycache__/parspost_lib.cpython-38.pyc
