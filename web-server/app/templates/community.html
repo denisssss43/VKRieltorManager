@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+
+		{% if title %}
+		<title>{{ title }} - VK Rieltor</title>
+		{% else %}
+		<title>VK Rieltor</title>
+		{% endif %}
+	</head>
+	<body>
+        {% for community in communities %}
+        <div>
+            <p>
+                Город: 
+                <b>
+                    {{ community.city }}
+                </b> 
+                <a href="{{ community.url }}">
+                    ссылка                    
+                </a>
+            </p>
+        </div>
+        {% endfor %}
+	</body>
+</html>
