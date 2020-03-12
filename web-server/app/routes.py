@@ -8,17 +8,29 @@ from vk_parser.lib.db_post import *
 
 @app.route('/')
 def index():
-	return '...'
-
-@app.route('/stat/<country>/<city>')
-def stat(country = None, city = None):
 	Connect(
 		host=post_library_host(), 
 		user=post_library_user(), 
 		password=post_library_password(), 
 		db=post_library_db())
+	
+	communities = GetCommunity()
+	for i in communities:
+		print (i)
+
+
+	for i in GetCommunity():
+		print(i)
+
 	CloseConnect()
 
+	return render_template(
+		'community.html',
+		title='Stat', 
+		communities=communities)
+
+@app.route('/stat/<country>/<city>')
+def stat(country = None, city = None):
 	return render_template(
 		'stat.html',
 		title='Stat', 
