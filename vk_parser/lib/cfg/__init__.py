@@ -9,7 +9,7 @@ def Connect():
 	"""Подключение к конфигурационному файлу"""
 	global connection, cursor
 
-	connection = sqlite3.connect("parser/lib/cfg/cfg.db")
+	connection = sqlite3.connect("vk_parser/lib/cfg/cfg.db")
 	cursor = connection.cursor()
 	
 	sql = """ 
@@ -65,7 +65,6 @@ def SetParam(**kwargs):
 
 
 if __name__ == "__main__":
-	
 	SetParam(
 		post_library_host=('localhost','значение хост библиотеки постов'), 
 		post_library_user=('usr_post_lib', 'имя пользователя с которого будет осуществлятся взаимодействие с библиотекой постов'), 
@@ -84,9 +83,9 @@ if __name__ == "__main__":
 	result = cursor.execute("SELECT * FROM param;").fetchall()
 	Close()
 
-	f = open('parser/lib/cfg/cfg.py','w', encoding='utf-8')
+	f = open('vk_parser/lib/cfg/cfg.py','w', encoding='utf-8')
 	f.write('"""Либа представлений параметров конфигурационного файла"""\n\n\n')
-	f.write('from cfg import GetParam\n\n\n')
+	f.write('from . import GetParam\n\n\n')
 	
 	for param in result:
 		f.write('def {0}():\n    """представление параметра {0}{1}"""\n    return GetParam("{0}")\n\n'.format(param[1]," - "+param[3] if param[3] != "" else ""))
