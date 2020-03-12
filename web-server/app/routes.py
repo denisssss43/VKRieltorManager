@@ -1,4 +1,4 @@
-from app import app, request # , render_template
+from app import app, request
 from flask import render_template
 import sys
 
