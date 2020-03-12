@@ -1,3 +1,5 @@
 .vscode/
-parser/lib/__pycache__
+__pycache__/
+parser/lib/__pycache__/
 web-server/app/__pycache__/
+web-server/app/__pycache__/routes.cpython-38.pyc
