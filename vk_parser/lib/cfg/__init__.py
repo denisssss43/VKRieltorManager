@@ -99,7 +99,10 @@ if __name__ == "__main__":
 	f.write('from . import GetParam\n\n\n')
 	
 	for param in result:
-		f.write('def {0}():\n    """представление параметра {0}{1}"""\n    return GetParam("{0}")\n\n'.format(param[1]," - "+param[3] if param[3] != "" else ""))
+		f.write(
+			'def {0}():\n    """представление параметра {0}{1}"""\n    return GetParam("{0}")\n\n'.format(
+				param[1],
+				" - "+param[3] if param[3] != "" else ""))
 
 	f.close()
 	
