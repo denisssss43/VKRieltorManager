@@ -12,7 +12,22 @@ connection = None # Объект подключения к бд
 def Connect(host='', user='', password='', db=''):
 	"""Подключение к БД"""
 	global connection
-	connection = pymysql.connect(host=host, user=user, password=password, db=db, charset='utf8', cursorclass=DictCursor)
+	try: connection = pymysql.connect(
+		host=host, 
+		user=user, 
+		password=password, 
+		db=db, 
+		charset='utf8', 
+		cursorclass=DictCursor, 
+		connect_timeout=.4)
+	except: connection = pymysql.connect(
+		host='localhost', 
+		user=user, 
+		password=password, 
+		db=db, 
+		charset='utf8', 
+		cursorclass=DictCursor, 
+		connect_timeout=.4)
 # NOTE:Изменено и откомментировано полностью
 def CloseConnect():
 	"""Закрытие подключения к БД"""

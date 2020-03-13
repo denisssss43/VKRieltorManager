@@ -1,4 +1,5 @@
-from app import app, request, render_template
+from app import app, request
+from flask import render_template
 import sys
 
 sys.path.append('..')
@@ -7,7 +8,9 @@ from vk_parser.lib.cfg.cfg import *
 from vk_parser.lib.db_post import *
 
 @app.route('/')
+@app.route('/index')
 def index():
+
 	Connect(
 		host=post_library_host(), 
 		user=post_library_user(), 
@@ -15,19 +18,11 @@ def index():
 		db=post_library_db())
 	
 	communities = GetCommunity()
-	for i in communities:
-		print (i)
-
-
-	for i in GetCommunity():
-		print(i)
+	# for i in communities: print (i)
 
 	CloseConnect()
 
-	return render_template(
-		'community.html',
-		title='Stat', 
-		communities=communities)
+	return render_template('community.html', title='Stat', communities=communities)
 
 @app.route('/stat/<country>/<city>')
 def stat(country = None, city = None):
@@ -38,12 +33,13 @@ def stat(country = None, city = None):
 		city=city)
 
 
+
+
+
+
 # @app.route('/search')
 # def home():
-
 # 	result = 'Параметры поиска:'
-
 # 	for i in request.args:
 # 		result += '<br/>{0}:{1}'.format(i,request.args.getlist(i))
-
 # 	return result

@@ -5,28 +5,28 @@ import os
 
 connection = None # Объект подключения
 cursor = None # Объект курсора
-path = ""
+path = "vk_parser/lib/cfg/"
 
 def Connect():
 	"""Подключение к конфигурационному файлу"""
 	global connection, cursor
 
-	# connection = sqlite3.connect(sys.path[0].replace('\\', '/')+'/cfg.db')
-
-	# print ('full path -', os.path.abspath(path+'cfg.db'))
-	connection = sqlite3.connect(os.path.abspath(path+'cfg.db'))
-	cursor = connection.cursor()
+	try: connection = sqlite3.connect(os.path.abspath(path+'cfg.db'))
+	except: connection = sqlite3.connect(os.path.abspath('cfg.db'))
 	
-	sql = """ 
-		CREATE TABLE IF NOT EXISTS "param" (
-		"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-		"name" TEXT NOT NULL UNIQUE,
-		"value" TEXT NOT NULL,
-		"description" TEXT NOT NULL);"""
+	if connection != None:
+		cursor = connection.cursor()
+		
+		sql = """ 
+			CREATE TABLE IF NOT EXISTS "param" (
+			"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+			"name" TEXT NOT NULL UNIQUE,
+			"value" TEXT NOT NULL,
+			"description" TEXT NOT NULL);"""
 
-	cursor.execute(sql)
+		cursor.execute(sql)
 
-	connection.commit()
+		connection.commit()
 
 def Close():
 	"""Закрытие подключения к конфигурационному файлу"""
@@ -99,7 +99,10 @@ if __name__ == "__main__":
 	f.write('from . import GetParam\n\n\n')
 	
 	for param in result:
-		f.write('def {0}():\n    """представление параметра {0}{1}"""\n    return GetParam("{0}")\n\n'.format(param[1]," - "+param[3] if param[3] != "" else ""))
+		f.write(
+			'def {0}():\n    """представление параметра {0}{1}"""\n    return GetParam("{0}")\n\n'.format(
+				param[1],
+				" - "+param[3] if param[3] != "" else ""))
 
 	f.close()
 	
