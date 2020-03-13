@@ -11,18 +11,31 @@ from vk_parser.lib.db_post import *
 @app.route('/index')
 def index():
 
-	Connect(
-		host=post_library_host(), 
-		user=post_library_user(), 
-		password=post_library_password(), 
-		db=post_library_db())
+	# Connect(
+	# 	host=post_library_host(), 
+	# 	user=post_library_user(), 
+	# 	password=post_library_password(), 
+	# 	db=post_library_db())
 	
-	communities = GetCommunity()
-	# for i in communities: print (i)
+	# communities = GetCommunity()
+	# # for i in communities: print (i)
 
-	CloseConnect()
+	# CloseConnect()
 
-	return render_template('community.html', title='Stat', communities=communities)
+	countries = [
+		{ 
+			'isSelected': False, 
+			'title': 'Россия',
+			'cities': [
+				{
+					'isSelected': False, 
+					'title': 'Красноярск'
+				}
+			]
+		}
+	]
+
+	return render_template('map.html', title='Map')
 
 @app.route('/stat/<country>/<city>')
 def stat(country = None, city = None):
