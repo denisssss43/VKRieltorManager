@@ -4,8 +4,8 @@
 	<div class="header">
 		<div class="container">
 			<div class="header__inner">
-				<div class="header__logo">{% if title %}{{ title }}{% else %}VK Rieltor{% endif %}</div>
-				
+                <div class="header__logo">{% if title %}{{ title }}{% else %}VK Rieltor{% endif %}</div>
+                
 				<nav class="header__nav"> 
 					{% for link in nav %}
 						{% if title == link.title %} 
@@ -13,7 +13,7 @@
 						{% else %} 
 							<a class="nav__link" href="{{ link.href }}">{{ link.title }}</a>
 						{% endif %}
-					{% endfor %} 
+					{% endfor %}
 				</nav>
 			</div>
 		</div>
