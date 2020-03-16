@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}	
+	{% for community in communities %}
+	<div>
+		<p>
+			Город: 
+			<b>
+				{{ community.city }}
+			</b> 
+			<a href="{{ community.url }}">
+				ссылка
+			</a>
+		</p>
+	</div>
+	{% endfor %}
+{% endblock %}

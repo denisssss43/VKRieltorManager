@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}	
+	<div class="container">
+		{% if country %}<h1>Страна: {{ country }}</h1>{% endif %}
+		{% if city %}<h1>Город: {{ city }}</h1>{% endif %}
+	</div>
+{% endblock %}

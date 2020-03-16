@@ -9,7 +9,7 @@ def Connect():
 	"""Подключение к конфигурационному файлу"""
 	global connection, cursor
 
-	connection = sqlite3.connect("res/cfg.db")
+	connection = sqlite3.connect("parser/res/cfg.db")
 	cursor = connection.cursor()
 	
 	sql = """ 
@@ -39,9 +39,7 @@ def GetParam(name):
 	global connection, cursor
 	result = None
 	Connect()
-	result = cursor.execute(
-		"""SELECT value FROM param WHERE name=? LIMIT 1;""",
-		[(name)]).fetchone()[0] # fetchall() or fetchone()
+	result = cursor.execute('SELECT value FROM param WHERE name=? LIMIT 1;', [(name)]).fetchone()[0] # fetchall() or fetchone()
 	Close()
 	return result
 
@@ -67,30 +65,31 @@ def SetParam(**kwargs):
 
 
 if __name__ == "__main__":
+	
 	SetParam(
 		post_library_host=('localhost','значение хост библиотеки постов'), 
 		post_library_user=('usr_post_lib', 'имя пользователя с которого будет осуществлятся взаимодействие с библиотекой постов'), 
-		post_library_password=('...', 'пароль пользователя с которого будет осуществляться взаимодействие с библиотекой постов'), 
+		post_library_password=('MnM32RtQt', 'пароль пользователя с которого будет осуществляться взаимодействие с библиотекой постов'), 
 		post_library_db=('post_library', 'наименование библиотеки постов'),
 		
-		user_library_host=('localhost', ''),
-		user_library_user=('root', ''),
-		user_library_password=('...', ''), 
-		user_library_db=('user_library', ''),
+		# user_library_host=('localhost', ''), 
+		# user_library_user=('root', ''), 
+		# user_library_password=('...', ''), 
+		# user_library_db=('user_library', ''),
 		
-		call_add_post_delay_ms=(60000, ''))
+		call_add_post_delay_ms=(60000, 'значение задержки запроса на добавление поста, мс'))
 
 
 	Connect()
-	result = cursor.execute("SELECT * FROM paramm;").fetchall()
+	result = cursor.execute("SELECT * FROM param;").fetchall()
 	Close()
 
-	f = open('lib/cfg.py','w', encoding='utf-8')
+	f = open('parser/lib/cfg.py','w', encoding='utf-8')
 	f.write('"""Либа представлений параметров конфигурационного файла"""\n\n\n')
-	f.write('from cfg_lib import GetParam\n\n\n')
+	f.write('from lib.cfg_lib import GetParam\n\n\n')
 	
 	for param in result:
-		f.write('def {0}():\n    """представление параметра {0}{2}"""\n    return GetParamm("{0}")\n\n'.format(param[1],param[2], " - "+param[3] if param[3] != "" else ""))
+		f.write('def {0}():\n    """представление параметра {0}{1}"""\n    return GetParam("{0}")\n\n'.format(param[1]," - "+param[3] if param[3] != "" else ""))
 
 	f.close()
 	

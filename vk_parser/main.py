@@ -1,16 +1,18 @@
+import sys
+sys.path.append('.')
 
+from vk_parser.lib.cfg.cfg import *
+from vk_parser.lib.post_parser import *
+from vk_parser.lib.db_post import *
 
-from lib.db_lib import AddPost, AddAddress, AddImg, GetCommunity, GetCity, GetCountry, AddCommunity, CloseConnect, Connect
-from lib.parspost_lib import WallItemSearch, AddressFromDescription
-from lib.cfg import *
 
 if __name__ == "__main__":
 
 	Connect(
-		host=post_library_host, 
-		user=post_library_user, 
-		password=, 
-		db=GetParam('post_library_db'))
+		host=post_library_host(), 
+		user=post_library_user(), 
+		password=post_library_password(), 
+		db=post_library_db())
 
 	
 	AddCommunity(
