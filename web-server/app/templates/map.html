@@ -1,23 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<div class="header">
-		<div class="container">
-			<div class="header__inner">
-				<div class="header__logo">{% if title %}{{ title }}{% else %}VK Rieltor{% endif %}</div>
-				
-				<nav class="header__nav"> 
-					{% for link in nav %}
-						{% if title == link.title %} 
-							<a class="nav__link__active" href="#">{{ link.title }}</a> 
-						{% else %} 
-							<a class="nav__link" href="{{ link.href }}">{{ link.title }}</a>
-						{% endif %}
-					{% endfor %} 
-				</nav>
-			</div>
-		</div>
-	</div>
 
 	<div class="intro">
 		<div class="container"></div>

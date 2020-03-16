@@ -7,17 +7,16 @@ sys.path.append('..')
 from vk_parser.lib.cfg.cfg import *
 from vk_parser.lib.db_post import *
 
-nav = [
-	{'title':'About', 'href':'/'}, 
-	{'title':'Map', 'href':'/map'}, 
-	{'title':'Search', 'href':'/search'},
-	{'title':'1', 'href':'#'},
-	{'title':'2', 'href':'#'},
-	{'title':'3', 'href':'#'}]
+nav = {
+	'About':{'title':'About', 'href':'/'}, 
+	'Stat':{'title':'Stat', 'href':'/stat'}, 
+	'Map':{'title':'Map', 'href':'/map'}, 
+	'Search':{'title':'Search', 'href':'/search'}}
 
 @app.route('/')
 @app.route('/index')
 def index():
+
 	# ans = render_template('map.html', nav=nav, title='Map')
 
 	# while ans.find('  ') > -1: ans = ans.replace('  ',' ')
@@ -27,8 +26,8 @@ def index():
 	# print(ans)
 	return render_template(
 		'index.html',
-		title='About',  
-		nav=nav)
+		title=nav['About']['title'],  
+		nav=nav.values())
 
 
 @app.route('/map')
@@ -84,14 +83,19 @@ def map(country=None, city=None):
 						{'latitude': 56.234246, 'longitude': 93.549251, 'title':'Курчатова проспект, 42'},
 						{'latitude': 56.224922, 'longitude': 93.5124, 'title':'Ленинградский проспект, 67'},]},]},]
 
-	return render_template('map.html', nav=nav, title='Map')
+	return render_template(
+		'map.html', 
+		title=nav['Map']['title'], 
+		nav=nav.values())
 
 
+@app.route('/stat')
 @app.route('/stat/<country>/<city>')
 def stat(country = None, city = None):
 	return render_template(
 		'stat.html',
-		title='Stat', 
+		title=nav['Stat']['title'], 
+		nav=nav.values(),
 		country=country,
 		city=city)
 
@@ -101,8 +105,8 @@ def stat(country = None, city = None):
 def search():
 	return render_template(
 		'search.html',
-		title='Search',  
-		nav=nav)
+		title=nav['Search']['title'],  
+		nav=nav.values())
 
 
 
