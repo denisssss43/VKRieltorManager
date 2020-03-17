@@ -28,7 +28,8 @@ def Connect():
 			charset='utf8', 
 			cursorclass=DictCursor, 
 			connect_timeout=.4)
-	except: 
+
+	try: 
 		print(
 			"""pymysql.connect(\n\thost={0},\n\tuser={1},\n\tpassword={2},\n\tdb={3},\n\tcharset={4},\n\tcursorclass=DictCursor,\n\tconnect_timeout={5})
 			""".format(
@@ -46,9 +47,9 @@ def Connect():
 			charset='utf8', 
 			cursorclass=DictCursor, 
 			connect_timeout=.4)
-	finally:
-		print ('pymysql.connect None') 
-		return None
+	
+	print ('pymysql.connect None') 
+	return None
 
 # NOTE:Изменено и откомментировано полностью
 def CloseConnect(connection):
@@ -107,6 +108,9 @@ def AddCommunity(connection, countryTitle='', cityTitle='', communityURL=''):
 
 	if connection != None: # Если подключение создано
 		with connection.cursor() as cursor:
+			print(
+				"""call post_library.sp_addCommunity(\n\t'{0}',\n\t'{1}',\n\t'{2}');
+				""".format(str(countryTitle),str(cityTitle),str(communityURL)))
 			cursor.execute(
 				"""
 				call post_library.sp_addCommunity(
@@ -293,7 +297,7 @@ def AddImg(connection, uuid_post='', _img_url=''):
 # 	for i in addreses:
 # 		print(i.city)
 
-	CloseConnect()
+# 	CloseConnect()
 
 # if __name__=="__main__":
 # 	Connect(
