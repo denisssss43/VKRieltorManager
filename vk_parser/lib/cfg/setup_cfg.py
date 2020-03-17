@@ -2,7 +2,7 @@
 import sys
 sys.path.append('.')
 
-from vk_parser.lib.cfg import SetParam, GetParam, Connect, Close
+from vk_parser.lib.cfg import SetParam, GetParam, Connect, Close, path
 
 def __setup():
 	SetParam(
@@ -27,12 +27,18 @@ if __name__ == "__main__":
 	
 	connection = Connect()
 	result = None
+	
 	if connection != None:
-		result = connection.cursor().execute("SELECT * FROM param;").fetchall()
+		result = connection.cursor().execute(
+			"""
+			SELECT * 
+			FROM param;
+			""").fetchall()
 		Close(connection)
+
 	if result != None:	
 		f = open(
-			'vk_parser/lib/cfg/cfg.py','w', 
+			'vk_parser/lib/cfg/cfg.py','w',
 			encoding='utf-8')
 		f.write('"""Либа представлений параметров конфигурационного файла"""\n\n\n')
 		f.write('from . import GetParam\n\n')
