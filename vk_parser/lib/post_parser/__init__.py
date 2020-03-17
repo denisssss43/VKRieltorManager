@@ -503,7 +503,3 @@ def WallItemSearch(country='', city='', id_group='', url_group='', offset=0):
 		# except: pass
 
 	return _list
-
-if __name__ == "__main__":
-
-	pass
