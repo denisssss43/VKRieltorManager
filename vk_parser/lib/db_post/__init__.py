@@ -6,28 +6,35 @@ from pymysql.cursors import DictCursor
 import ast 
 import copy
 
+from vk_parser.lib.cfg.cfg import Config
+
 connection = None # Объект подключения к бд 
 
 # NOTE:Изменено и откомментировано полностью
-def Connect(host='', user='', password='', db=''):
+def Connect():
 	"""Подключение к БД"""
 	global connection
-	try: connection = pymysql.connect(
-		host=host, 
-		user=user, 
-		password=password, 
-		db=db, 
-		charset='utf8', 
-		cursorclass=DictCursor, 
-		connect_timeout=.4)
-	except: connection = pymysql.connect(
-		host='localhost', 
-		user=user, 
-		password=password, 
-		db=db, 
-		charset='utf8', 
-		cursorclass=DictCursor, 
-		connect_timeout=.4)
+
+	cfg = Config()
+
+	try: 
+		connection = pymysql.connect(
+			host=cfg.post_library_host, 
+			user=cfg.post_library_user, 
+			password=cfg.post_library_password, 
+			db=cfg.post_library_db, 
+			charset='utf8', 
+			cursorclass=DictCursor, 
+			connect_timeout=.4)
+	except: 
+		connection = pymysql.connect(
+			host='localhost', 
+			user=cfg.post_library_user, 
+			password=cfg.post_library_password, 
+			db=cfg.post_library_db, 
+			charset='utf8', 
+			cursorclass=DictCursor, 
+			connect_timeout=.4)
 # NOTE:Изменено и откомментировано полностью
 def CloseConnect():
 	"""Закрытие подключения к БД"""

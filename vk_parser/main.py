@@ -8,11 +8,7 @@ from vk_parser.lib.db_post import *
 
 if __name__ == "__main__":
 
-	Connect(
-		host=post_library_host(), 
-		user=post_library_user(), 
-		password=post_library_password(), 
-		db=post_library_db())
+	Connect()
 
 	
 	AddCommunity(
@@ -41,11 +37,14 @@ if __name__ == "__main__":
 		communityURL='https://m.vk.com/public80318218')
 	
 	
-	for i in range(0,1):
+	for i in range(0,5):
 		for community in GetCommunity():
 			print(i, 'community -',community['url'])
 
-			city = GetCity(uuid=community['uuid_city']) 
+			if community == None: continue
+			city = GetCity(uuid=community['uuid_city'])
+
+			if city == None: continue
 			country = GetCountry(uuid=city['uuid_country'])
 
 			for wall_item in WallItemSearch(country=country['title'], city=city['title'], url_group=community['url'],offset=i*5):
