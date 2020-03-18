@@ -10,3 +10,5 @@ vk_parser/lib/__pycache__/parspost_lib.cpython-38.pyc
 vk_parser/lib/post_parser/__pycache__/__init__.cpython-38.pyc
 web-server/app/__pycache__/web_api.cpython-38.pyc
 web-server/app/__pycache__/web_server.cpython-38.pyc
+vk_parser/lib/cfg/__setup.py
+vk_parser/lib/cfg/__pycache__/__setup.cpython-38.pyc
