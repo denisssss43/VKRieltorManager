@@ -12,3 +12,4 @@ web-server/app/__pycache__/web_api.cpython-38.pyc
 web-server/app/__pycache__/web_server.cpython-38.pyc
 vk_parser/lib/cfg/__setup.py
 vk_parser/lib/cfg/__pycache__/__setup.cpython-38.pyc
+web-server/__pycache__/main.cpython-38.pyc
