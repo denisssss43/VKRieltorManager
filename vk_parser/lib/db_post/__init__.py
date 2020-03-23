@@ -8,19 +8,10 @@ from vk_parser.lib.cfg.cfg import Config
 # NOTE:Изменено и откомментировано полностью
 def Connect():
 	"""Подключение к БД"""
-	cfg = Config()
+	cfg = Config() # Объявление обработчика конфигурационного файла
 
-	try: 
-		print(
-			"""pymysql.connect(\n\thost={0},\n\tuser={1},\n\tpassword={2},\n\tdb={3},\n\tcharset={4},\n\tcursorclass=DictCursor,\n\tconnect_timeout={5})
-			""".format(
-				cfg.post_library_host, 
-				cfg.post_library_user, 
-				cfg.post_library_password, 
-				cfg.post_library_db, 
-				'utf8', 
-				.4))
-		return pymysql.connect(
+	try: # Попытка подключения к БД по параметрам из конфигурационного файла
+		result = pymysql.connect(
 			host=cfg.post_library_host, 
 			user=cfg.post_library_user, 
 			password=cfg.post_library_password, 
@@ -28,18 +19,15 @@ def Connect():
 			charset='utf8', 
 			cursorclass=DictCursor, 
 			connect_timeout=.4)
-
-	try: 
 		print(
 			"""pymysql.connect(\n\thost={0},\n\tuser={1},\n\tpassword={2},\n\tdb={3},\n\tcharset={4},\n\tcursorclass=DictCursor,\n\tconnect_timeout={5})
-			""".format(
-				'localhost', 
-				cfg.post_library_user, 
-				cfg.post_library_password, 
-				cfg.post_library_db, 
-				'utf8', 
-				.4))
-		return pymysql.connect(
+			""".format(cfg.post_library_host, cfg.post_library_user, cfg.post_library_password, cfg.post_library_db, 'utf8', .4))
+		return result
+	except: pass
+
+	
+	try:  # Попытка подключения к БД по параметрам из конфигурационного файла, но по локальному адресу
+		result = pymysql.connect(
 			host='localhost', 
 			user=cfg.post_library_user, 
 			password=cfg.post_library_password, 
@@ -47,6 +35,11 @@ def Connect():
 			charset='utf8', 
 			cursorclass=DictCursor, 
 			connect_timeout=.4)
+		print(
+			"""pymysql.connect(\n\thost={0},\n\tuser={1},\n\tpassword={2},\n\tdb={3},\n\tcharset={4},\n\tcursorclass=DictCursor,\n\tconnect_timeout={5})
+			""".format('localhost', cfg.post_library_user, cfg.post_library_password, cfg.post_library_db, 'utf8', .4))
+		return result
+	except: pass
 	
 	print ('pymysql.connect None') 
 	return None
@@ -195,7 +188,16 @@ def AddImg(connection, uuid_post='', _img_url=''):
 	pass
 
 
-
+def Execute(connection, sql):
+	result = None
+	if connection != None: # Если подключение создано
+		with connection.cursor() as cursor:
+			print(sql)
+			cursor.execute(sql)
+			result = cursor.fetchall()
+			connection.commit()
+	else: return result
+	return result
 
 
 
