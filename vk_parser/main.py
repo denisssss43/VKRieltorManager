@@ -1,35 +1,34 @@
 import sys
 sys.path.append('.')
 
-from vk_parser.lib.cfg.cfg import *
-from vk_parser.lib.post_parser import *
-from vk_parser.lib.db_post import *
-
-
+# print ('from vk_parser.lib.cfg.cfg import *')
+# from vk_parser.lib.cfg.cfg import Config
+import vk_parser.lib.db_post as db_post
+import vk_parser.lib.post_parser as post_parser
 
 def __addCommunities(connection):
 	if connection != None:
-		AddCommunity(
+		db_post.AddCommunity(
 			connector,
 			countryTitle='Россия', 
 			cityTitle='Красноярск', 
 			communityURL='https://m.vk.com/public9751268')
-		AddCommunity(
+		db_post.AddCommunity(
 			connector,
 			countryTitle='Россия', 
 			cityTitle='Красноярск', 
 			communityURL='https://m.vk.com/public123114913')
-		AddCommunity(
+		db_post.AddCommunity(
 			connector,
 			countryTitle='Россия', 
 			cityTitle='Красноярск', 
 			communityURL='https://m.vk.com/public105543780')
-		AddCommunity(
+		db_post.AddCommunity(
 			connector,
 			countryTitle='Россия', 
 			cityTitle='Красноярск',
 			communityURL='https://m.vk.com/public76867861')
-		AddCommunity(
+		db_post.AddCommunity(
 			connector,
 			countryTitle='Россия', 
 			cityTitle='Красноярск', 
@@ -38,18 +37,18 @@ def __addCommunities(connection):
 def __searchPosts(connection):
 	if connection != None:
 		for i in range(0,5):
-			for community in GetCommunity():
+			for community in db_post.GetCommunity():
 				print(i, 'community -',community['url'])
 
 				if community == None: continue
-				city = GetCity(uuid=community['uuid_city'])
+				city = db_post.GetCity(uuid=community['uuid_city'])
 
 				if city == None: continue
-				country = GetCountry(uuid=city['uuid_country'])
+				country = db_post.GetCountry(uuid=city['uuid_country'])
 
-				for wall_item in WallItemSearch(country=country['title'], city=city['title'], url_group=community['url'],offset=i*5):
+				for wall_item in post_parser.WallItemSearch(country=country['title'], city=city['title'], url_group=community['url'],offset=i*5):
 
-					post = AddPost(
+					post = db_post.AddPost(
 						wall_item['link_community'],
 						wall_item['description'], 
 						wall_item['date'], 
@@ -62,16 +61,16 @@ def __searchPosts(connection):
 					if post['status'] == 2:
 						
 						for url in wall_item['img_urls']:
-							AddImg(
+							db_post.AddImg(
 								uuid_post=post['uuid'],
 								_img_url=url)
 
-						address = AddressFromDescription(
+						address = post_parser.AddressFromDescription(
 							description=wall_item['description'], 
 							country=country['title'], 
 							city=city['title'])
 
-						AddAddress(
+						db_post.AddAddress(
 							uuid_post=post['uuid'], 
 							countryTitle=country['title'], 
 							cityTitle=city['title'], 
@@ -83,11 +82,11 @@ def __searchPosts(connection):
 
 
 if __name__ == "__main__":
-
-	connector = Connect()
+	
+	connector = db_post.Connect()
 
 	__addCommunities(connector)
 
 	# __searchPosts(connector)
 
-	CloseConnect(connector)
+	db_post.CloseConnect(connector)
