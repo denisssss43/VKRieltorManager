@@ -1,11 +1,10 @@
 from app import app, request
 from flask import render_template
-import sys
 
-sys.path.append('..')
-
-from vk_parser.lib.cfg.cfg import *
-from vk_parser.lib.db_post import *
+# import sys
+# sys.path.append('..')
+# from vk_parser.lib.cfg.cfg import *
+# from vk_parser.lib.db_post import *
 
 nav = {
 	'About':{'title':'About', 'href':'/'}, 
@@ -13,6 +12,7 @@ nav = {
 	'Map':{'title':'Map', 'href':'/map'}, 
 	'Search':{'title':'Search', 'href':'/search'}}
 
+# index or main routs
 @app.route('/')
 @app.route('/index')
 def index():
@@ -29,7 +29,7 @@ def index():
 		title=nav['About']['title'],  
 		nav=nav.values())
 
-
+# map routs
 @app.route('/map')
 @app.route('/map/<country>/<city>')
 def map(country=None, city=None):
@@ -88,7 +88,7 @@ def map(country=None, city=None):
 		title=nav['Map']['title'], 
 		nav=nav.values())
 
-
+# 
 @app.route('/stat')
 @app.route('/stat/<country>/<city>')
 def stat(country = None, city = None):
@@ -99,7 +99,6 @@ def stat(country = None, city = None):
 		country=country,
 		city=city)
 
-
 @app.route('/search')
 # @app.route('/search/<country>/<city>')
 def search():
@@ -107,12 +106,3 @@ def search():
 		'search.html',
 		title=nav['Search']['title'],  
 		nav=nav.values())
-
-
-
-# @app.route('/search')
-# def home():
-# 	result = 'Параметры поиска:'
-# 	for i in request.args:
-# 		result += '<br/>{0}:{1}'.format(i,request.args.getlist(i))
-# 	return result
