@@ -1,5 +1,3 @@
 if __name__ == "__main__":
     import os
-    
-    os.system('set FLASK_APP=web-server/main.py')
-    os.system('cd web-server & flask run')
+    os.system('cd web-server & set FLASK_APP=main.py & flask run')
