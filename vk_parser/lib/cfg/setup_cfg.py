@@ -1,31 +1,36 @@
-"""  """
-import sys
-sys.path.append('.')
-
-from vk_parser.lib.cfg import SetParam, GetParam, Connect, Close, path
-
-def __setup():
-	SetParam(
-		post_library_host=('172.16.17.67','значение хост библиотеки постов'), 
-		post_library_user=('usr_post_lib', 'имя пользователя с которого будет осуществлятся взаимодействие с библиотекой постов'), 
-		post_library_password=('MnM32RtQt', 'пароль пользователя с которого будет осуществляться взаимодействие с библиотекой постов'), 
-		post_library_db=('post_library', 'наименование библиотеки постов'),
-		
-		# user_library_host=('localhost', ''), 
-		# user_library_user=('root', ''), 
-		# user_library_password=('...', ''), 
-		# user_library_db=('user_library', ''),
-		
-		call_add_post_delay_ms=(60000, 'значение задержки запроса на добавление поста, мс'))
+""" Генератор конфигурационного модуля """
 
 if __name__ == "__main__":
-	path = "vk_parser/lib/cfg/"
-	__setup()
+	import sys
+	sys.path.append('.')
 
-	path = "web-server/"
-	__setup()
+	from vk_parser.lib.cfg import SetParam, GetParam, Connect, Close
+	from vk_parser.lib.cfg.__setup import __setup
 	
-	connection = Connect()
+	# Адрес по которому будет создан конфигурационный файл
+	__setup("vk_parser/lib/cfg/")
+	"""
+	# Вызов функции внесения в конфигурационный файл необходимых значений
+	SetParam(
+		"vk_parser/lib/cfg/",
+		post_library_host=('...','Значение хост библиотеки постов'), 
+		post_library_user=('...', 'Имя пользователя с которого будет осуществлятся взаимодействие с библиотекой постов'), 
+		post_library_password=('...', 'Пароль пользователя с которого будет осуществляться взаимодействие с библиотекой постов'), 
+		post_library_db=('...', 'Наименование библиотеки постов'),)
+	"""
+	
+	# Адрес по которому будет создан конфигурационный файл
+	__setup("web-server/")
+	"""
+	# Вызов функции внесения в конфигурационный файл необходимых значений
+	SetParam(
+		post_library_host=('...','Значение хост библиотеки постов'), 
+		post_library_user=('...', 'Имя пользователя с которого будет осуществлятся взаимодействие с библиотекой постов'), 
+		post_library_password=('...', 'Пароль пользователя с которого будет осуществляться взаимодействие с библиотекой постов'), 
+		post_library_db=('...', 'Наименование библиотеки постов'),)
+	"""
+	
+	connection = Connect("vk_parser/lib/cfg/")
 	result = None
 	
 	if connection != None:
@@ -46,7 +51,7 @@ if __name__ == "__main__":
 		f.write('\t""" Объект-конфигуратор """\n\n')
 		for param in result:
 			f.write(
-				'\t# Представление параметра {0}{1}\n\t{0} = GetParam("{0}")\n\n'.format(
+				'\t# Представление параметра {0}{1}\n\t{0} = GetParam("vk_parser/lib/cfg/", "{0}")\n\n'.format(
 					param[1], 
 					" - "+param[3] if param[3] != "" else ""))
 		

@@ -3,14 +3,18 @@
 import sqlite3
 import os
 
-path = "vk_parser/lib/cfg/"
-
-def Connect():
+def Connect(path):
 	"""Подключение к конфигурационному файлу"""
+	
 	connection = None
 
-	try: connection = sqlite3.connect(os.path.abspath(path+'cfg.db'))
-	except: connection = sqlite3.connect(os.path.abspath('cfg.db'))
+	try: 
+		connection = sqlite3.connect(os.path.abspath(path+'cfg.db'))
+		print("""{1}|sqlite3.connect('{0}') """.format(os.path.abspath(path+'cfg.db'),path))
+	except:
+		connection = sqlite3.connect(os.path.abspath('cfg.db'))
+		print("""{1}|sqlite3.connect('{0}') """.format(os.path.abspath('cfg.db'),path)) 
+		pass
 	
 	if connection != None:
 		connection.cursor().execute(
@@ -32,9 +36,9 @@ def Close(connection):
 		connection.close()
 	pass
 
-def GetParam(name):
+def GetParam(path, name):
 	"""Получение значения параметра по имени name=value"""
-	connection = Connect()
+	connection = Connect(path)
 	result = None
 	
 	if connection != None:
@@ -49,9 +53,9 @@ def GetParam(name):
 
 	return result
 
-def SetParam(**kwargs):
+def SetParam(path, **kwargs):
 	"""Передача значения в идин или несколько параметров (создание параметра в случае если он не создан) SetParamm(name=('text','описание'), name=(1), ...)"""
-	connection = Connect()	
+	connection = Connect(path)	
 	if connection != None:
 		for key, value in kwargs.items():
 			if type(value) == tuple:
