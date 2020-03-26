@@ -595,3 +595,7 @@ server/flask_server/__pycache__/__init__.cpython-38.pyc
 server/flask_server/__pycache__/routs.cpython-38.pyc
 server/flask_server/__pycache__/web_api.cpython-38.pyc
 server/flask_server/__pycache__/web_server.cpython-38.pyc
+server/_lib/cfg/__pycache__/__init__.cpython-38.pyc
+server/_lib/cfg/__pycache__/__setup.cpython-38.pyc
+server/_lib/cfg/cfg.db
+server/_lib/cfg/__setup.py
