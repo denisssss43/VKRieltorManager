@@ -588,3 +588,10 @@ web_server/app/__pycache__/__init__.cpython-38.pyc
 web_server/app/__pycache__/routs.cpython-38.pyc
 web_server/app/__pycache__/web_api.cpython-38.pyc
 web_server/app/__pycache__/web_server.cpython-38.pyc
+server/__pycache__/__init__.cpython-38.pyc
+server/__pycache__/_main.cpython-38.pyc
+server/__pycache__/main.cpython-38.pyc
+server/flask_server/__pycache__/__init__.cpython-38.pyc
+server/flask_server/__pycache__/routs.cpython-38.pyc
+server/flask_server/__pycache__/web_api.cpython-38.pyc
+server/flask_server/__pycache__/web_server.cpython-38.pyc
