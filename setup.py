@@ -25,14 +25,14 @@ echo install PyMySQL
 pip install PyMySQL
 
 echo Создание конфиг-файла:
-py server\\_lib\cfg\\setup_cfg.py
+py server\\_lib\\cfg\\setup_cfg.py
 
 echo Вывод установленных библиотек виртуальной среды:
 pip list
 
 """.format(
 		os.path.abspath('Scripts'), 
-		os.path.abspath('web_server'), 
+		os.path.abspath('server'), 
 		os.path.abspath('')
 	).replace('\\','/').replace('\n\n', '& echo --- & ').replace('\n', ' & ')
 

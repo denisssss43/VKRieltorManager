@@ -1,1 +1,0 @@
-from server.flask_server import web_app

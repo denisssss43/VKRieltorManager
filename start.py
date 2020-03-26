@@ -10,8 +10,8 @@ echo Подготовка к запуску сервера flask:
 echo FLASK_ENV=development
 echo # set FLASK_ENV=development
 
-echo FLASK_APP={1}:web_app
-set FLASK_APP={1}:web_app
+echo FLASK_APP={1}/main.py:web_app
+set FLASK_APP={1}/main.py:web_app
 
 flask run
 
