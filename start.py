@@ -3,23 +3,24 @@
 """
 
 import os
-cmd = """start...
+cmd = """echo start...
+cd {2}
 
 echo Подготовка к запуску сервера flask:
 echo FLASK_ENV=development
-set FLASK_ENV=development
+echo # set FLASK_ENV=development
 
-echo FLASK_APP={1}/__init__.py
-set FLASK_APP={1}/__init__.py
+echo FLASK_APP={1}
+set FLASK_APP={1}
+
 flask run
 
 """.format(
-		os.path.abspath('Scripts/'), 
-		os.path.abspath('web_server/'), 
+		os.path.abspath('Scripts'), 
+		os.path.abspath('server'), 
 		os.path.abspath('')
 	).replace('\\','/').replace('\n\n', '& echo --- & ').replace('\n', ' & ')
 
 
 if __name__ == "__main__":
-	print ('\nsetup_start run abs_PATH {0} \n\n'.format(os.path.abspath('')))
 	os.system(cmd)

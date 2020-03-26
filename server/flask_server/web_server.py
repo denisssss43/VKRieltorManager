@@ -1,11 +1,18 @@
 
-from web_server.app import app, request
-from flask import render_template
+# from web_server.app import app, request
+# from flask import render_template
 
 # import sys
 # sys.path.append('..')
 # from vk_parser.lib.cfg.cfg import *
 # from vk_parser.lib.db_post import *
+
+
+from server.flask_server import web_app
+from flask import request, render_template
+
+import json
+import sys
 
 nav = {
 	'About':{'title':'About', 'href':'/'}, 
@@ -14,8 +21,8 @@ nav = {
 	'Search':{'title':'Search', 'href':'/search'}}
 
 # index or main routs
-@app.route('/')
-@app.route('/index')
+@web_app.route('/')
+@web_app.route('/index')
 def index():
 
 	# ans = render_template('map.html', nav=nav, title='Map')
@@ -31,8 +38,8 @@ def index():
 		nav=nav.values())
 
 # map routs
-@app.route('/map')
-@app.route('/map/<country>/<city>')
+@web_app.route('/map')
+@web_app.route('/map/<country>/<city>')
 def map(country=None, city=None):
 	# Connect(
 	# 	host=post_library_host(), 
@@ -90,8 +97,8 @@ def map(country=None, city=None):
 		nav=nav.values())
 
 # 
-@app.route('/stat')
-@app.route('/stat/<country>/<city>')
+@web_app.route('/stat')
+@web_app.route('/stat/<country>/<city>')
 def stat(country = None, city = None):
 	return render_template(
 		'stat.html',
@@ -100,7 +107,7 @@ def stat(country = None, city = None):
 		country=country,
 		city=city)
 
-@app.route('/search')
+@web_app.route('/search')
 # @app.route('/search/<country>/<city>')
 def search():
 	return render_template(
