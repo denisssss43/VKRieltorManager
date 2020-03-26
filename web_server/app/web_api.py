@@ -1,13 +1,13 @@
 # from flask import render_template
 
-from app import app, request
+from web_server.app import app, request
 import json
 import sys
 
 sys.path.append('..')
 
-from vk_parser.lib.cfg.cfg import *
-import vk_parser.lib.db_post as db_post
+# from vk_parser.lib.cfg.cfg import *
+# import vk_parser.lib.db_post as db_post
 
 # @app.route('/api/')
 
