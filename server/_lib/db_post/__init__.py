@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from contextlib import closing
 from pymysql.cursors import DictCursor
 
-from vk_parser.lib.cfg.cfg import Config
+from server._lib.cfg.cfg import Config
 
 # NOTE:Изменено и откомментировано полностью
 def Connect():
@@ -11,6 +11,9 @@ def Connect():
 	cfg = Config() # Объявление обработчика конфигурационного файла
 
 	try: # Попытка подключения к БД по параметрам из конфигурационного файла
+		print(
+			"""pymysql.connect(\n\thost={0},\n\tuser={1},\n\tpassword={2},\n\tdb={3},\n\tcharset={4},\n\tcursorclass=DictCursor,\n\tconnect_timeout={5})
+			""".format(cfg.post_library_host, cfg.post_library_user, cfg.post_library_password, cfg.post_library_db, 'utf8', .4))
 		result = pymysql.connect(
 			host=cfg.post_library_host, 
 			user=cfg.post_library_user, 
@@ -19,14 +22,14 @@ def Connect():
 			charset='utf8', 
 			cursorclass=DictCursor, 
 			connect_timeout=.4)
-		print(
-			"""pymysql.connect(\n\thost={0},\n\tuser={1},\n\tpassword={2},\n\tdb={3},\n\tcharset={4},\n\tcursorclass=DictCursor,\n\tconnect_timeout={5})
-			""".format(cfg.post_library_host, cfg.post_library_user, cfg.post_library_password, cfg.post_library_db, 'utf8', .4))
 		return result
 	except: pass
 
 	
 	try:  # Попытка подключения к БД по параметрам из конфигурационного файла, но по локальному адресу
+		print(
+			"""pymysql.connect(\n\thost={0},\n\tuser={1},\n\tpassword={2},\n\tdb={3},\n\tcharset={4},\n\tcursorclass=DictCursor,\n\tconnect_timeout={5})
+			""".format('localhost', cfg.post_library_user, cfg.post_library_password, cfg.post_library_db, 'utf8', .4))
 		result = pymysql.connect(
 			host='localhost', 
 			user=cfg.post_library_user, 
@@ -35,9 +38,6 @@ def Connect():
 			charset='utf8', 
 			cursorclass=DictCursor, 
 			connect_timeout=.4)
-		print(
-			"""pymysql.connect(\n\thost={0},\n\tuser={1},\n\tpassword={2},\n\tdb={3},\n\tcharset={4},\n\tcursorclass=DictCursor,\n\tconnect_timeout={5})
-			""".format('localhost', cfg.post_library_user, cfg.post_library_password, cfg.post_library_db, 'utf8', .4))
 		return result
 	except: pass
 	
@@ -175,7 +175,7 @@ def AddAddress(connection, uuid_post='', countryTitle='', cityTitle='', addressT
 
 def AddImg(connection, uuid_post='', _img_url=''):
 	"""Добавление изображения в БД (post_library)"""
-	print ("uuid post:{0} img url:{1}".format(uuid_post,_img_url))
+	# print ("uuid post:{0} img url:{1}".format(uuid_post,_img_url))
 	if connection != None: # Если подключение создано
 		with connection.cursor() as cursor:
 			cursor.execute(
@@ -198,115 +198,3 @@ def Execute(connection, sql):
 			connection.commit()
 	else: return result
 	return result
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# addreses = list()
-# def Addreses():
-# 	global addreses
-# 	addreses = list()
-# 	if connection != None: # Если подключение создано
-# 		with connection.cursor() as cursor:
-# 			cursor.execute("""
-# 				SELECT 
-# 					`address`.`id`,
-# 					`address`.`uuid`,
-# 					`address`.`uuid_city`,
-# 					`address`.`title`,
-# 					`address`.`latitude`,
-# 					`address`.`longitude`
-# 				FROM `post_library`.`address`;
-# 				""")
-# 			for i in cursor.fetchall():
-# 				# print(i)
-# 				addreses.append(
-# 					Address(
-# 						id=i['id'], 
-# 						uuid=i['uuid'], 
-# 						uuid_city=i['uuid_city'], 
-# 						title=i['title'], 
-# 						latitude=i['latitude'], 
-# 						longitude=i['longitude']))
-# 	return addreses
-# class Address(object):
-# 	def __init__(self, id=None, uuid=None, uuid_city=None, title=None, latitude=None, longitude=None):
-# 		self.id = id
-# 		self.uuid = uuid
-# 		self.uuid_city = uuid_city
-# 		self.title = title
-# 		self.latitude = latitude
-# 		self.longitude = longitude
-# 	pass
-# 	def get_city(self):
-# 		if connection != None: # Если подключение создано
-# 			with connection.cursor() as cursor:
-# 				cursor.execute("""
-# 					SELECT 
-# 						`city`.`id`,
-#     					`city`.`uuid`,
-#     					`city`.`uuid_country`,
-#     					`city`.`title`
-# 					FROM `post_library`.`city`
-# 					WHERE `city`.`uuid` LIKE {0};
-# 					""".format(self.uuid_city))
-				
-# 				return cursor.fetchall()
-# 		return None
-# 	def set_city(self, value):
-# 		if connection != None: # Если подключение создано
-# 			with connection.cursor() as cursor:
-# 				cursor.execute("""
-# 					SELECT 
-# 						`city`.`id`,
-#     					`city`.`uuid`,
-#     					`city`.`uuid_country`,
-#     					`city`.`title`
-# 					FROM `post_library`.`city`;
-# 					""")
-# 	city = property(get_city, set_city)
-# if __name__=="__main__":
-# 	Connect(
-# 		host='172.16.17.67', 
-# 		user='usr_post_lib', 
-# 		password='MnM32RtQt', 
-# 		db='post_library')
-# 	# print(Addreses)
-# 	Addreses()
-# 	for i in addreses:
-# 		print(i.city)
-
-# 	CloseConnect()
-
-# if __name__=="__main__":
-# 	Connect(
-# 		host=post_library_host(), 
-# 		user=post_library_user(), 
-# 		password=post_library_password(), 
-# 		db=post_library_db())
-
-		
-# 	CloseConnect()
