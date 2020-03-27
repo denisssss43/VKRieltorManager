@@ -3,6 +3,7 @@
 """
 
 import os
+from server._lib.post_parser import ParserAsync
 cmd = """echo setup ...
 
 echo Установка виртуальной среды: 
@@ -23,6 +24,10 @@ echo install db-sqlite3
 pip install db-sqlite3
 echo install PyMySQL
 pip install PyMySQL
+echo install requests
+pip install requests
+echo install beautifulsoup4
+pip install beautifulsoup4
 
 echo Создание конфиг-файла:
 py server\\_lib\\cfg\\setup_cfg.py
@@ -38,4 +43,5 @@ pip list
 
 
 if __name__ == "__main__":
+	ParserAsync().start()
 	os.system(cmd)
