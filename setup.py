@@ -3,7 +3,6 @@
 """
 
 import os
-from server._lib.post_parser import ParserAsync
 cmd = """echo setup ...
 
 echo Установка виртуальной среды: 
@@ -43,5 +42,4 @@ pip list
 
 
 if __name__ == "__main__":
-	ParserAsync().start()
 	os.system(cmd)
