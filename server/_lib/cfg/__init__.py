@@ -9,11 +9,11 @@ def Connect(path):
 	connection = None
 
 	try: 
-		connection = sqlite3.connect(os.path.abspath(path+'cfg.db'))
-		print("""{1}|sqlite3.connect('{0}') """.format(os.path.abspath(path+'cfg.db'),path))
+		# print("""try {1}|sqlite3.connect('{0}') """.format(path+'/cfg.db',path))
+		connection = sqlite3.connect(path+'/cfg.db')
 	except:
-		connection = sqlite3.connect(os.path.abspath('cfg.db'))
-		print("""{1}|sqlite3.connect('{0}') """.format(os.path.abspath('cfg.db'),path)) 
+		# print("""except {1}|sqlite3.connect('{0}') """.format('cfg.db',path)) 
+		connection = sqlite3.connect('cfg.db')
 		pass
 	
 	if connection != None:
