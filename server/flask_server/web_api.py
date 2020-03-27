@@ -1,26 +1,32 @@
-from server.flask_server import web_app
 from flask import request, render_template
 
 import json
 import sys
 
-# from vk_parser.lib.cfg.cfg import *
-# import vk_parser.lib.db_post as db_post
-
-# @app.route('/api/')
+from server.flask_server import web_app
+import server._lib.db_post as db_post
+from server._lib.cfg.cfg import *
 
 @web_app.route('/api')
 @web_app.route('/api/')
 def api(): 
 
-	result = db_post.Execute(db_post.Connect(), 
-	"""
-	SELECT * FROM post_library.post;
-	""")
+	result = db_post.Execute(
+		db_post.Connect(), 
+		"""SELECT * FROM post_library.telephone;""")
 
 	return json.dumps(result, indent=4)
 
+@web_app.route('/api/post/')
+def post(): 
+	
+	offset = 0
 
+	result = db_post.Execute(
+		db_post.Connect(), 
+		"""SELECT * FROM post_library.telephone ORDER BY id LIMIT 10 OFFSET {0};""".format(offset))
+
+	return json.dumps(result, indent=4)
 
 @web_app.route('/api/vinegret')
 def api_GetVinegret(): 
