@@ -17,6 +17,8 @@ echo Запуск виртуальной среды ({0}/activate):
 echo Обновление pip и установка/обновление всех необходимых библиотек:
 echo upgrade pip
 python -m pip install --upgrade pip
+echo install djangopy -3 -m django --version 
+pip3 install django
 echo install Flask
 pip install Flask
 echo install db-sqlite3
