@@ -21,4 +21,7 @@ class Config(object):
 	# Представление параметра call_add_post_delay_ms - значение задержки запроса на добавление поста, мс
 	call_add_post_delay_ms = GetParam("C:\\Users\\Denis\\Documents\\GitHub\\VKRieltorManager\\server\\_lib\\cfg", "call_add_post_delay_ms")
 
+	# Представление параметра offset_add_post - кол-во экранов от последнего, которое будет просматриваться в добавленных группах
+	offset_add_post = GetParam("C:\\Users\\Denis\\Documents\\GitHub\\VKRieltorManager\\server\\_lib\\cfg", "offset_add_post")
+
 	pass

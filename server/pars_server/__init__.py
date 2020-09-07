@@ -5,6 +5,8 @@ import threading
 class ParserAsync(threading.Thread):
 	def __init__(self): 
 		super(ParserAsync, self).__init__(name="Parser", daemon=True)
+		from server._lib.cfg.cfg import Config 
+		self.config = Config() 
 
 	def __addCommunities(self):
 		# print('__addCommunities')
@@ -49,44 +51,48 @@ class ParserAsync(threading.Thread):
 
 					if city == None or country == None: continue
 
-					for	i in range(20):
-
+					# for i in range(int(self.config.offset_add_post)):
+					for i in range(1): 
 						for wall_item in post_parser.WallItemSearch(country=country['title'], city=city['title'], url_group=community['url'],offset=i*5):
-							if wall_item['description'] == '': continue
-							if wall_item['price'] < 3000.0: continue
-							if len(wall_item['img_urls']) < 1: continue
-							if len(wall_item['telephones']) < 1: continue
+							try:
+								if wall_item['description'] == '': continue
+								if wall_item['price'] < 3000.0: continue
+								if len(wall_item['img_urls']) < 1: continue
+								if len(wall_item['telephones']) < 1: continue
 
-							post = db_post.AddPost(
-								self.connector, 
-								wall_item['link_community'],
-								wall_item['description'], 
-								wall_item['date'], 
-								wall_item['price'], 
-								wall_item['link'], 
-								wall_item['telephones'])						
-
-							if post['status'] == 2:
-								
-								for url in wall_item['img_urls']:
-									db_post.AddImg(
-										self.connector, 
-										uuid_post=post['uuid'],
-										_img_url=url)
-
-								address = post_parser.AddressFromDescription( 
-									description=wall_item['description'], 
-									country=country['title'], 
-									city=city['title'])
-
-								db_post.AddAddress(
+								post = db_post.AddPost(
 									self.connector, 
-									uuid_post=post['uuid'], 
-									countryTitle=country['title'], 
-									cityTitle=city['title'], 
-									addressTitle=address['address'], 
-									latitude=address['latitude'], 
-									longitude=address['longitude'])
+									wall_item['link_community'],
+									wall_item['description'], 
+									wall_item['date'], 
+									wall_item['price'], 
+									wall_item['link'], 
+									wall_item['telephones'])						
+
+								if post['status'] == 2:
+									
+									for url in wall_item['img_urls']:
+										db_post.AddImg(
+											self.connector, 
+											uuid_post=post['uuid'],
+											_img_url=url)
+
+									address = post_parser.AddressFromDescription( 
+										description=wall_item['description'], 
+										country=country['title'], 
+										city=city['title'])
+
+									db_post.AddAddress(
+										self.connector, 
+										uuid_post=post['uuid'], 
+										countryTitle=country['title'], 
+										cityTitle=city['title'], 
+										addressTitle=address['address'], 
+										latitude=address['latitude'], 
+										longitude=address['longitude'])
+									
+									print ('new add')
+							except: pass
 
 	def run(self):
 		# print('run Parser')

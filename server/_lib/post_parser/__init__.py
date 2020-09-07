@@ -306,8 +306,6 @@ def DatePars(wall_item):
 		# Получение не обработанной даты
 		str_date = str(wi_date.get_text())
 
-		# print(str_date)
-
 		# Получение времени
 		patern = re.compile( # Объявление патерна регулярного выражения
 			r'(\w+:\w+)')
@@ -347,28 +345,25 @@ def DatePars(wall_item):
 		while match:
 			# Запись исходной строки
 			month = [x for x in range(len(m)) if m[x] == match[0]][0]
-
-			# print('1 month', month)
 			
 			if month == 0: # В случае если дата указана как сегодня
 				day = datetime.datetime.now().day
 				month = datetime.datetime.now().month
 				year = datetime.datetime.now().year
-			if month == 1: # В случае если дата указана как вчера
+			elif month == 1: # В случае если дата указана как вчера
 				# Получение вчерашней даты
 				date = datetime.datetime.now() - datetime.timedelta(days=1)
 				day = date.day
 				month = date.month
 				year = date.year
-			else: month = month - 1
+			else: 
+				month = month - 1
 			
 			if year == -1: # В случае если год не был указан в исходной дате
 				if month <= datetime.datetime.now().month:
 					year = datetime.datetime.now().year 
 				else: 
 					year = datetime.datetime.now().year-1
-
-			# print('2 month', month)
 			break
 
 		year = int(year)
@@ -376,6 +371,8 @@ def DatePars(wall_item):
 		day = int(day)
 		hour = int(hour)
 		minute = int(minute)
+
+		# print ('year={0}, month={1}, day={2}, hour={3}, minute={4}'.format(year, month, day, hour, minute))
 
 		# print('year',year, 'month',month, 'day',day, 'hour',hour, 'minute',minute)
 		# print(datetime.datetime(year=year, month=month, day=day, hour=hour, minute=minute))
@@ -394,6 +391,7 @@ def PricePars(description):
 
 	# Список найденых цен в описании
 	price = list()
+
 
 	# Нормализация цен в описании
 	patern = re.compile( # Объявление патерна регулярного выражения
@@ -420,6 +418,8 @@ def PricePars(description):
 
 	if len(price) < 1: return 0.0
 	
+	# print (description, '\n', price)
+
 	# Возврат максимальной цены
 	return max(price)
 # NOTE:Изменено и откомментировано полностью
@@ -503,3 +503,5 @@ def WallItemSearch(country='', city='', id_group='', url_group='', offset=0):
 		# except: pass
 
 	return _list
+
+

@@ -2,6 +2,17 @@
     "python.pythonPath": "C:\\Users\\Denis\\Documents\\GitHub\\VKRieltorManager\\Scripts\\python.exe",
     "python.jediEnabled": false,
     "files.exclude": {
-        "**/vk_parser/old": true
-    }
+        "**/_db": true,
+        "**/_lib": true,
+        "**/flask_server": true,
+        "**/django_server": false,
+        "**/Include": true,
+        "**/Lib": true,
+        "**/pars_server": true,
+        "**/pyvenv.cfg": true,
+        "**/README.md": true,
+        "**/Scripts": true,
+        "**/server/__*": true
+    },
+    "python.languageServer": "Microsoft"
 }
